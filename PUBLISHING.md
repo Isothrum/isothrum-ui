@@ -45,7 +45,7 @@ both; GitHub Actions `permissions: id-token: write`; provenance is automatic.)
      npm has no org-wide trusted-publisher setting).
    - Add a **GitHub Actions** publisher with exactly:
      - **Organization / owner:** `isoloom`
-     - **Repository:** `isothrum-ui`  (i.e. `isoloom/isothrum-ui`)
+     - **Repository:** `isothrum-ui`  (i.e. `Isothrum/isothrum-ui`)
      - **Workflow filename:** `publish-npm.yml`
      - **Environment:** `npm-publish`  (the workflow runs in this GitHub
        environment; the names must match)
@@ -77,7 +77,7 @@ range and reinstall:
 
 ## Package name
 
-**`@isothrum/editor`** (confirmed). The repo is `isoloom/isothrum-ui`; the npm
+**`@isothrum/editor`** (confirmed). The repo is `Isothrum/isothrum-ui`; the npm
 name need not match the repo. Renaming later would be a one-line change to `name`
 in `package.json` plus the two consumer dependency keys.
 
