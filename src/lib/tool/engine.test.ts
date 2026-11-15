@@ -9,6 +9,7 @@ function fakeEngine(plan: () => string, files = "[]"): Engine {
     bundle: () => new Uint8Array(),
     own_files_json: () => files,
     bundle_target: () => new Uint8Array(),
+    choices_json: () => "{}",
   };
 }
 

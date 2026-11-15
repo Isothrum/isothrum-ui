@@ -1,7 +1,7 @@
 {
   "name": "@isothrum/editor",
-  "version": "1.0.0",
-  "description": "The Isothrum lab editor: a React canvas that draws infrastructure labs and compiles them to an Isoloom spec, plus the Isothrum WebAssembly engine. Shared by the Isothrum desktop app and isothrum.com.",
+  "version": "3.0.0",
+  "description": "The Isothrum lab editor: a React canvas that draws infrastructure labs and compiles them to an Isoloom spec, plus Isoloom's WebAssembly engine. Shared by the Isothrum desktop app and isothrum.com.",
   "license": "Apache-2.0",
   "type": "module",
   "sideEffects": false,
@@ -18,8 +18,12 @@
     },
     "./styles/globals.css": "./styles/globals.css",
     "./styles/theme.css": "./styles/theme.css",
-    "./wasm/isothrum_wasm.js": "./wasm/isothrum_wasm.js",
-    "./wasm/isothrum_wasm_bg.wasm": "./wasm/isothrum_wasm_bg.wasm",
+    "./wasm/isoloom_wasm.js": {
+      "types": "./wasm/isoloom_wasm.d.ts",
+      "default": "./wasm/isoloom_wasm.js"
+    },
+    "./wasm/isoloom_wasm_bg.wasm": "./wasm/isoloom_wasm_bg.wasm",
+    "./wasm/engine.json": "./wasm/engine.json",
     "./build-desktop-editor": "./scripts/build-desktop-editor.mjs",
     "./package.json": "./package.json"
   },
@@ -42,6 +46,7 @@
     "build:lib": "node scripts/build-lib.mjs",
     "build:types": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "build:desktop": "node scripts/build-desktop-editor.mjs dist/desktop",
+    "build:engine": "node scripts/build-engine.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "check": "npm run typecheck && npm run test && npm run build",

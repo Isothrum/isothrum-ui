@@ -1,16 +1,28 @@
 import type { Addresses } from "./router-ports";
 
 /**
- * The engine's JavaScript surface, from `public/wasm/isothrum_wasm.js` (built from
- * `crates/isothrum-wasm`). Everything runs in the browser: nothing is sent to a server.
+ * The version of Isoloom's engine (`isoloom-wasm`) the package ships in `wasm/` and is written
+ * for: `wasm/engine.json` records the build, and the tests fail when the two differ.
+ */
+export const ENGINE_VERSION = "3.0.0";
+
+/**
+ * The engine's JavaScript surface, from `wasm/isoloom_wasm.js` (Isoloom's `isoloom-wasm` crate,
+ * built by `scripts/build-engine.mjs`). Everything runs in the browser: nothing is sent to a
+ * server. Each function but `plan_json` throws an `Error` saying why when it can't do its work.
  */
 export interface Engine {
   default: () => Promise<unknown>;
+  /** A `Plan` as JSON; a topology that gives none is a plan with `error`. */
   plan_json: (topology: string) => string;
+  /** The lab's zip: `isoloom.yml`, the lab's own files and every target's. */
   bundle: (topology: string) => Uint8Array;
   /** The lab's own files (provisioning starters, appliance configurations), as JSON. */
   own_files_json: (topology: string) => string;
+  /** One target's zip (`docker`, `cloud-vm/aws`…): `isoloom.yml`, the lab's own files and that folder. */
   bundle_target: (topology: string, targetDir: string) => Uint8Array;
+  /** Isoloom's own lists (its OSes, network appliances and port protocols), as JSON. */
+  choices_json: () => string;
 }
 
 export interface GeneratedFile {
@@ -30,7 +42,7 @@ export interface Plan {
 }
 
 /** Served from `public/wasm/`; loaded at runtime, not bundled. */
-const ENGINE_URL: string = "/wasm/isothrum_wasm.js";
+const ENGINE_URL: string = "/wasm/isoloom_wasm.js";
 
 /** Loads and starts the engine. */
 export async function loadEngine(): Promise<Engine> {

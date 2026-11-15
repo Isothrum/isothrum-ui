@@ -3,6 +3,7 @@ Copyright 2026 The Isothrum authors
 
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
-This product bundles the Isothrum WebAssembly engine (wasm/isothrum_wasm.js and
-wasm/isothrum_wasm_bg.wasm), built from the isoloom/isothrum crate isothrum-wasm,
-also licensed under the Apache License, Version 2.0.
+This product bundles Isoloom's WebAssembly engine (wasm/isoloom_wasm.js and
+wasm/isoloom_wasm_bg.wasm), built from the isoloom-wasm crate of isoloom/isoloom
+(https://github.com/isoloom/isoloom), also licensed under the Apache License,
+Version 2.0.

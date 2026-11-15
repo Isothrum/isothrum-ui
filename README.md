@@ -3,7 +3,7 @@
 The Isothrum lab editor as a reusable React package: a canvas that draws an
 infrastructure lab (machines, LANs, switches, routers, cables) and compiles it,
 in the browser, to an [Isoloom](https://www.isoloom.com) spec and every target's
-files through the Isothrum WebAssembly engine.
+files through Isoloom's WebAssembly engine.
 
 It is the single source of the editor shared by the Isothrum desktop app and
 [isothrum.com](https://www.isothrum.com). The website's content, branding,
@@ -47,8 +47,9 @@ export function App() {
 | `auth` | `AuthClient \| null` | `null` | the host's auth client (see below); only used when `accounts` is `true` |
 | `brandMark` | `BrandMark` | Isothrum mark | the product mark on the empty canvas |
 
-The engine is loaded at runtime from `/wasm/isothrum_wasm.js`, so the host must
-serve the two files in `@isothrum/editor/wasm/` at the path `/wasm/`.
+The engine is loaded at runtime from `/wasm/isoloom_wasm.js`, so the host must
+serve `isoloom_wasm.js` and `isoloom_wasm_bg.wasm` from `@isothrum/editor/wasm/` at
+the path `/wasm/`.
 
 ### Styles
 
@@ -86,17 +87,28 @@ host copies that folder and serves it. It is produced by
 
 ## The WebAssembly engine
 
-`wasm/isothrum_wasm.js` and `wasm/isothrum_wasm_bg.wasm` are built from the
-`isothrum-wasm` crate in [isoloom/isothrum](https://github.com/isoloom/isothrum):
+`wasm/` holds Isoloom's engine: the `isoloom-wasm` crate of
+[isoloom/isoloom](https://github.com/isoloom/isoloom), compiled to WebAssembly. It
+is Isoloom itself, so the editor's model is validated against exactly what Isoloom
+accepts. It exports `plan_json`, `bundle`, `bundle_target`, `own_files_json` and
+`choices_json`.
+
+The package is written for one version of it, `ENGINE_VERSION` in
+`src/lib/tool/engine.ts`. `wasm/engine.json` records the build that is committed
+(the crate's version, Isoloom's commit, each file's SHA-256), and `npm run check`
+fails when the version isn't the pinned one or a file isn't the one recorded.
+
+One script rebuilds it, from a checkout of Isoloom at the pinned version:
 
 ```sh
-# in the isothrum repo
-cargo xtask wasm            # builds web/pkg/
-# then copy web/pkg/isothrum_wasm.js and _bg.wasm into this package's wasm/
+npm run build:engine -- ../isoloom                  # rebuilds wasm/ and wasm/engine.json
+npm run build:engine -- ../isoloom --pin 3.1.0      # moves the pin to another version
 ```
 
-The engine is Isoloom itself compiled to WebAssembly, so the editor's model is
-validated against exactly what Isoloom accepts.
+It runs Isoloom's own build (`cargo run -p xtask -- wasm`), so it needs Isoloom's
+Rust toolchain with the `wasm32-unknown-unknown` target, `wasm-pack`, and the
+`wasm-bindgen` Isoloom's `Cargo.lock` locks. After `--pin`, set `ENGINE_VERSION` to
+the same version.
 
 ## Develop
 

@@ -26,9 +26,9 @@ let loading: Promise<TestEngine> | null = null;
 export function shippedEngine(): Promise<TestEngine> {
   loading ??= (async () => {
     const dir = join(process.cwd(), "wasm");
-    const mod: unknown = await import(pathToFileURL(join(dir, "isothrum_wasm.js")).href);
-    if (!isEngineModule(mod)) throw new Error("wasm/isothrum_wasm.js is not the Isothrum engine with choices_json");
-    mod.initSync({ module: readFileSync(join(dir, "isothrum_wasm_bg.wasm")) });
+    const mod: unknown = await import(pathToFileURL(join(dir, "isoloom_wasm.js")).href);
+    if (!isEngineModule(mod)) throw new Error("wasm/isoloom_wasm.js is not Isoloom's engine");
+    mod.initSync({ module: readFileSync(join(dir, "isoloom_wasm_bg.wasm")) });
     return mod;
   })();
   return loading;
