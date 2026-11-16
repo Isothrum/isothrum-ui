@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { exampleLab, vlanExample } from "./examples";
 import { canvasIssues } from "./issues";
-import { compile, issueText, sw1Networks } from "@/test/lab";
+import { compile } from "@/test/builders";
+import { issueText, sw1Networks } from "@/test/fixtures";
 
 const networksOf = (t: ReturnType<typeof compile>) => Object.fromEntries(Object.entries(t.nodes).map(([n, m]) => [n, m.networks]));
 

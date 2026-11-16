@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { cloneLab } from "./clone";
 import type { LabNode } from "./model";
-import { byId, cable, lan, machine, note, switchNode } from "@/test/lab";
+import { byId, cable, lan, machine, note, switchNode } from "@/test/builders";
 
 const office = lan("l1", { name: "office", cidr: "10.10.1.0/24" });
 const web = machine("m1", { name: "web1", pins: { office: 20 } }, { x: 10, y: 20 });

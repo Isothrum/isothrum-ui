@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { type Gns3Wiring, gns3Cables } from "./gns3-cables";
-import { autoRouter, lan, machine } from "@/test/lab";
+import { autoRouter, lan, machine } from "@/test/builders";
 
 /** A GNS3 LAN where its switch was: 260 by 160 at the origin. */
 const office = lan("office", {}, { w: 260, h: 160 });

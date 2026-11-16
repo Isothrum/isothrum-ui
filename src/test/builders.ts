@@ -1,5 +1,4 @@
 import type { CableData, CableEdge, LabNode, LanData, LanNode, MachineData, MachineNode, NoteNode, SwitchNode } from "@/lib/tool/model";
-import type { IssueText } from "@/lib/tool/issues";
 import { toTopology } from "@/lib/tool/topology";
 
 /**
@@ -74,15 +73,6 @@ export function byId<T extends LabNode>(nodes: T[], id: string): T {
   return found;
 }
 
-/** The canvas's findings in plain words, so tests can read them. */
-export const issueText: IssueText = {
-  vlanBlocks: (vlan, block, other, sw) => `${vlan}: ${block} vs ${other} on ${sw}`,
-  areaBlock: (lan, block, switches) => `area ${lan}: ${block} vs ${switches}`,
-  noName: { machine: "unnamed machine", lan: "unnamed lan", switch: "unnamed switch" },
-  sameName: { machine: (n) => `two machines ${n}`, lan: (n) => `two lans ${n}`, switch: (n) => `two switches ${n}` },
-  badPort: (m, entry) => `${m}: port ${entry}`,
-};
-
 /** A compiled lab: `toTopology`'s JSON, parsed. */
 export interface Compiled {
   name: string;
@@ -93,9 +83,3 @@ export interface Compiled {
 
 /** The lab as the engine reads it. */
 export const compile = (nodes: LabNode[], edges: CableEdge[] = [], name = "lab"): Compiled => JSON.parse(toTopology(name, nodes, edges)) as Compiled;
-
-/** The networks the VLANs of a switch named sw1 become: `switchNode("sw1")`'s, and the VLAN example's. */
-export const sw1Networks: Compiled["networks"] = {
-  vlan10: { cidr: "10.10.10.0/24", internet: true, switch: "sw1", vlan: 10 },
-  vlan20: { cidr: "10.10.20.0/24", internet: true, switch: "sw1", vlan: 20 },
-};

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { draftFromTopology, type Topology } from "./layout";
 import { nodeName, type LabNode } from "./model";
-import { byId, compile } from "@/test/lab";
+import { byId, compile } from "@/test/builders";
 
 /** Two LANs, a server and a workstation in the first, an automatic router between them, two machines on none. */
 const topology: Topology = {
