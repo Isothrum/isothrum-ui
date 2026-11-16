@@ -5,7 +5,8 @@
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, rmSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { createRequire } from "node:module";
+import { dirname, join, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const out = resolve(process.argv[2] ?? join(root, "out-desktop"));
@@ -34,7 +35,11 @@ await build({
   logLevel: "warning",
 });
 
-execFileSync(join(root, "node_modules/.bin/tailwindcss"), ["-i", join(root, "desktop-editor/editor.css"), "-o", join(out, "styles.css"), "--minify"], {
+// The Tailwind CLI's own script, run by this Node: node_modules/.bin holds a shell script on
+// Linux and macOS but a .cmd on Windows, which execFileSync can't start.
+const require = createRequire(import.meta.url);
+const tailwindBin = join(dirname(require.resolve("@tailwindcss/cli/package.json")), require("@tailwindcss/cli/package.json").bin.tailwindcss);
+execFileSync(process.execPath, [tailwindBin, "-i", join(root, "desktop-editor/editor.css"), "-o", join(out, "styles.css"), "--minify"], {
   cwd: root,
   stdio: ["ignore", "ignore", "inherit"],
 });
