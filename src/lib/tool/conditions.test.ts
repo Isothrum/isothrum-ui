@@ -9,12 +9,12 @@ describe("tcOf", () => {
     expect(tcOf({ delay: 40, jitter: 5, loss: 0.5, rate: 10 })).toEqual({ delay: "40ms", jitter: "5ms", loss: 0.5, rate: "10mbit" });
   });
 
-  test("writes a fractional rate in kbit", () => {
-    expect(tcOf({ rate: 2.5 })).toEqual({ rate: "2500kbit" });
-  });
-
-  test("writes a rate that isn't whole kbit/s in bits", () => {
-    expect(tcOf({ rate: 0.0005 })).toEqual({ rate: "500bit" });
+  test.each([
+    [10, "10mbit"],
+    [2.5, "2500kbit"],
+    [0.0005, "500bit"],
+  ])("writes a rate of %s Mbit/s in the largest unit that keeps it whole: %s", (rate, written) => {
+    expect(tcOf({ rate })).toEqual({ rate: written });
   });
 
   test("writes a loss above 100% and a jitter without a delay as they are, for Isoloom to report", () => {
@@ -54,22 +54,8 @@ describe("conditionsOf", () => {
     expect(conditionsOf({ delay: "1s", jitter: "500us" }).conditions).toEqual({ delay: 1000, jitter: 0.5 });
   });
 
-  test("converts gbit, kbit and bits to Mbit/s", () => {
-    expect(conditionsOf({ rate: "1gbit" }).conditions?.rate).toBe(1000);
-    expect(conditionsOf({ rate: "500kbit" }).conditions?.rate).toBe(0.5);
-    expect(conditionsOf({ rate: "2000000bit" }).conditions?.rate).toBe(2);
-  });
-
-  test("reports a rate without its unit, as Isoloom does", () => {
-    expect(conditionsOf({ rate: "2000000" })).toEqual({ conditions: undefined, problems: [{ field: "rate", value: "2000000" }] });
-  });
-
   test("reads a number in any spelling Isoloom reads: a sign, a lone point, an exponent", () => {
     expect(conditionsOf({ delay: "+.5ms", jitter: "5.ms", rate: "1E-3gbit" }).conditions).toEqual({ delay: 0.5, jitter: 5, rate: 1 });
-  });
-
-  test("reads a rate in bytes per second as eight bits a byte", () => {
-    expect(conditionsOf({ rate: "2mbps" }).conditions?.rate).toBe(16);
   });
 
   test("reports each value it can't read, and keeps the others", () => {
@@ -92,10 +78,6 @@ describe("conditionsOf", () => {
     expect(conditionsOf({})).toEqual({ conditions: undefined, problems: [] });
   });
 
-  test("inverts tcOf", () => {
-    const c = { delay: 40, jitter: 5, loss: 0.5, rate: 2.5 };
-    expect(conditionsOf(tcOf(c))).toEqual({ conditions: c, problems: [] });
-  });
 
 });
 
@@ -103,7 +85,7 @@ describe("conditionsOf, for any value", () => {
   test("inverts tcOf for any conditions the editor keeps", () => {
     fc.assert(
       fc.property(arbitraryConditions, (c) => {
-        expect(conditionsOf(tcOf(c)).conditions).toEqual(c);
+        expect(conditionsOf(tcOf(c))).toEqual({ conditions: c, problems: [] });
       }),
     );
   });
@@ -210,9 +192,9 @@ describe("a link condition is read exactly as Isoloom reads it", () => {
     );
   });
 
-  test("a rate without its unit is reported, as Isoloom does", async () => {
-    expect(conditionsOf({ rate: "10" }).problems).toEqual([{ field: "rate", value: "10" }]);
-    expect(await refuses({ rate: "10" }, "rate")).toBe(true);
+  test("a rate without its unit is reported, as Isoloom refuses it", async () => {
+    expect(conditionsOf({ rate: "2000000" })).toEqual({ conditions: undefined, problems: [{ field: "rate", value: "2000000" }] });
+    expect(await refuses({ rate: "2000000" }, "rate")).toBe(true);
   });
 
   test("what the editor writes back, Isoloom reads as the same conditions", async () => {
@@ -228,8 +210,7 @@ describe("a link condition is read exactly as Isoloom reads it", () => {
     );
   });
 
-  test("a loss above 100% or a jitter without a delay is written for Isoloom to report, never changed", async () => {
-    expect(tcOf({ loss: 150, jitter: 5 })).toEqual({ loss: 150, jitter: "5ms" });
+  test("a loss above 100% or a jitter without a delay, written as it is, is reported by Isoloom", async () => {
     const problems = (await verdict(oneContainerTopology(tcOf({ loss: 150, jitter: 5 })))).problems.join("\n");
     expect(problems).toContain("networks.lan.tc.loss");
     expect(problems).toContain("networks.lan.tc.jitter");

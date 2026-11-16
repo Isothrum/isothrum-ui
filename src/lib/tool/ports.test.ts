@@ -62,9 +62,12 @@ describe("a machine's ports, as Isoloom takes them", () => {
     );
   });
 
-  test("a port out of range or a protocol Isoloom doesn't have is refused by the engine too", async () => {
-    for (const service of [{ port: 0 }, { port: 70_000 }, { port: 80, protocol: "sctp" }]) {
-      expect((await verdict(oneContainerTopology(undefined, [service]))).ok).toBe(false);
-    }
+  test.each([
+    ["0", { port: 0 }],
+    ["70000", { port: 70_000 }],
+    ["80/sctp", { port: 80, protocol: "sctp" }],
+  ])("%s, a port out of range or a protocol Isoloom doesn't have, is reported by the editor and refused by the engine", async (entry, service) => {
+    expect(readPorts(entry)).toEqual({ services: [], bad: [entry] });
+    expect((await verdict(oneContainerTopology(undefined, [service]))).ok).toBe(false);
   });
 });

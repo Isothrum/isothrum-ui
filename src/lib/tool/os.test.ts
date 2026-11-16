@@ -43,6 +43,7 @@ describe("currentMachine", () => {
 });
 
 test("a new VM is Debian 12, one of the OSes offered", () => {
+  expect(DEFAULT_OS).toBe("debian@12");
   expect(OS_CHOICES).toContain(DEFAULT_OS);
 });
 

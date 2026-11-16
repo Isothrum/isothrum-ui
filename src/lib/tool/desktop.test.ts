@@ -49,11 +49,10 @@ describe("machineStatus", () => {
 });
 
 describe("runningServices", () => {
-  test("counts the running services of docker compose ps, one JSON object per line", () => {
-    expect(runningServices('{"State":"running"}\n x \n{"State":"exited"}\n\n{"State":"running"}')).toBe(2);
-  });
-
-  test("counts none in empty output", () => {
-    expect(runningServices("")).toBe(0);
+  test.each([
+    ['{"State":"running"}\n x \n{"State":"exited"}\n\n{"State":"running"}', 2],
+    ["", 0],
+  ])("counts the running services of docker compose ps, one JSON object per line: %j has %i", (ps, running) => {
+    expect(runningServices(ps)).toBe(running);
   });
 });
