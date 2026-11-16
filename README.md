@@ -117,7 +117,7 @@ and Windows.
 Where tests live and how they are named, so each behaviour has one obvious place:
 
 - **One test file per module, next to it, named after it**: `src/lib/tool/cables.ts` is tested in
-  `src/lib/tool/cables.test.ts`. A test file tests one module and a module has at most one test
+  `src/lib/tool/cables.test.ts`, `src/components/tool/hooks/use-toast.ts` in `use-toast.test.ts`. A test file tests one module and a module has at most one test
   file; a test of what a function does lives with that function, even when it goes through
   another module to get there.
 - **Checks against Isoloom itself** (the engine shipped in `wasm/`) live in the test file of the
@@ -129,9 +129,17 @@ Where tests live and how they are named, so each behaviour has one obvious place
     `cable`, `compile`…);
   - `fixtures.ts`: fixed values tests compare with (stand-in text, expected networks);
   - `arbitraries.ts`: fast-check generators of what the editor draws, for property tests;
-  - `shipped-engine.ts`: the shipped engine loaded in Node, and what it says of a topology.
+  - `shipped-engine.ts`: the shipped engine loaded in Node, and what it says of a topology;
+  - `fake-engine.ts`: a stand-in for the engine port, for what the editor does with its answers;
+  - `hooks.ts`: fakes and drivers for the hooks' tests (the desktop app's `invoke`, the project
+    store, keys, the fake clock).
 - **Names**: `describe` names the function (or the subject); each `test` says, in a sentence, the
   behaviour it proves. Several cases of one behaviour are one `test.each` table, not one test each.
 - **Assert values, codes and types, not message text.** An error the code throws has a class and a
   `code`; the words a user reads live in `src/lib/tool/text/` and are tested there.
-- **No network and no waiting**: `fetch` and storage are faked with `vi.stubGlobal`.
+- **Hooks are tested through `renderHook`** (`@testing-library/react`) in a DOM: a hook's test file
+  starts with `// @vitest-environment happy-dom` (the rest of the suite runs in Node). They prove
+  what a user or a contract sees (what the canvas shows, what the desktop app or the store is
+  asked), not how the hook keeps its state.
+- **No network and no waiting**: `fetch`, storage and the desktop app are faked (`vi.stubGlobal`,
+  `fakeInvoke`), and time is the fake clock (`vi.useFakeTimers()`, `elapse(ms)`): no test sleeps.
