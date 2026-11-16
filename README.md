@@ -104,4 +104,9 @@ validated against exactly what Isoloom accepts.
 npm run typecheck   # tsc, strict
 npm run test        # vitest (unit + engine against the shipped wasm)
 npm run build       # dist/index.js, dist/model.js, dist/types, dist/desktop
+npm run check       # all three: what CI runs
 ```
+
+CI runs the check and nothing else: `ci.yml` on pull requests into `dev`, `gate.yml` before `main`
+and before a release (`publish-npm.yml` publishes nothing unless it passes), each on Linux, macOS
+and Windows.
