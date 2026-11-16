@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { addVlan, changeVlan, cyclePort, removeVlan, vlanNumber } from "./switch-edit";
-import { switchNode } from "@/test/lab";
+import { switchNode } from "@/test/builders";
 
 /** vlan10 on ports 1 and 2, vlan20 on port 3, port 4 a trunk, the rest unassigned. */
 const data = switchNode("sw1").data;

@@ -2,8 +2,8 @@ import fc from "fast-check";
 import { describe, expect, test } from "vitest";
 import { decodeLab, encodeLab, isDesign, normalizeDraft, plainDraft, storedEdges, storedNodes } from "./draft";
 import { LAN_BEHAVIOR, cleanName, type CableEdge, type Draft } from "./model";
-import { arbitraryLab } from "@/test/arbitrary";
-import { autoRouter, cable, lan, machine } from "@/test/lab";
+import { arbitraryLab } from "@/test/arbitraries";
+import { autoRouter, cable, lan, machine } from "@/test/builders";
 
 /** A lab with UI state on it: a selected, measured machine, a selected cable with conditions. */
 const lab = (): Draft => ({

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { cable, compile, lan, machine, sw1Networks, switchNode } from "@/test/lab";
+import { cable, compile, lan, machine, switchNode } from "@/test/builders";
+import { sw1Networks } from "@/test/fixtures";
 import { toTopology } from "./topology";
 
 /** A machine's box, centered in the 400 by 300 LAN at the origin. */

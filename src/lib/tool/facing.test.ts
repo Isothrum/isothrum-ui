@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { facingSides, shownCables } from "./facing";
-import { autoRouter, cable, lan, machine, switchNode } from "@/test/lab";
+import { autoRouter, cable, lan, machine, switchNode } from "@/test/builders";
 
 const office = lan("office");
 const vlanArea = lan("v20", { name: "vlan20" }, { x: 2000 });

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { routerPortsOf } from "./router-ports";
-import { autoRouter, cable, lan, machine, realRouter, switchNode } from "@/test/lab";
+import { autoRouter, cable, lan, machine, realRouter, switchNode } from "@/test/builders";
 import { trunkStripes } from "./vlans";
 
 const office = lan("office");

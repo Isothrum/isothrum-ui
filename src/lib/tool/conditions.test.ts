@@ -1,7 +1,8 @@
 import fc from "fast-check";
 import { describe, expect, test } from "vitest";
-import { conditionsLabel, conditionsOf, tcOf, tcProblemText, withCondition } from "./conditions";
-import { arbitraryConditions } from "@/test/arbitrary";
+import { conditionsLabel, conditionsOf, tcOf, tcProblemText, withCondition, type Tc } from "./conditions";
+import { arbitraryConditions } from "@/test/arbitraries";
+import { oneContainerTopology, verdict } from "@/test/shipped-engine";
 
 describe("tcOf", () => {
   test("writes delay, jitter, loss and rate as Isoloom's tc takes them", () => {
@@ -166,5 +167,71 @@ describe("withCondition", () => {
   test("keeps a field a stored lab carries that the editor doesn't know", () => {
     const stored = { delay: 40, mtu: 1400 };
     expect(withCondition(stored, "delay", "")).toEqual({ mtu: 1400 });
+  });
+});
+
+/** Whether Isoloom finds a problem with `field` of the LAN's `tc`. */
+async function refuses(tc: Tc, field: keyof Tc): Promise<boolean> {
+  const v = await verdict(oneContainerTopology(tc));
+  return v.problems.some((p) => p.includes(`networks.lan.tc.${field} `));
+}
+
+/** A number in one of the spellings Rust reads (or doesn't: an empty one, a lone point). */
+const number = (odd: string[]) =>
+  fc
+    .tuple(fc.constantFrom("", "+", "-"), fc.oneof(fc.nat(100_000).map(String), fc.double({ min: 0, max: 1e6, noNaN: true }).map(String), fc.constantFrom(".5", "5.", "1e3", "2E-2", ...odd)))
+    .map(([sign, n]) => `${sign}${n}`);
+
+/** A `tc` value: a number, then letters that may or may not be a unit. */
+const measured = fc
+  .tuple(number(["", ".", "x1"]), fc.constantFrom("", "ms", "s", "us", "MS", "bit", "kbit", "mbit", "gbit", "bps", "kbps", "mbps", "gbps", "Mbit", "kb", "e", "m s"))
+  .map(([n, unit]) => `${n}${unit}`);
+
+/** A value Isoloom takes: a number and one of `units`. */
+const taken = (units: string[]) => fc.tuple(number([]), fc.constantFrom(...units)).map(([n, unit]) => `${n}${unit}`);
+
+/** Whether two readings hold the same numbers, but for what floating point loses. */
+function same(a: Record<string, number | undefined> | undefined, b: Record<string, number | undefined> | undefined): boolean {
+  const keys = new Set([...Object.keys(a ?? {}), ...Object.keys(b ?? {})]);
+  return [...keys].every((k) => {
+    const [x, y] = [a?.[k], b?.[k]];
+    return x !== undefined && y !== undefined && Math.abs(x - y) <= 1e-9 * Math.max(1, Math.abs(x));
+  });
+}
+
+describe("a link condition is read exactly as Isoloom reads it", () => {
+  test("a delay or a rate: Isoloom refuses it if and only if the editor reports it", async () => {
+    await fc.assert(
+      fc.asyncProperty(measured, fc.constantFrom("delay", "rate"), async (value, field) => {
+        const reported = conditionsOf({ [field]: value }).problems.length > 0;
+        expect(reported, `${field}: ${value}`).toBe(await refuses({ [field]: value }, field));
+      }),
+      { numRuns: 120 },
+    );
+  });
+
+  test("a rate without its unit is reported, as Isoloom does", async () => {
+    expect(conditionsOf({ rate: "10" }).problems).toEqual([{ field: "rate", value: "10" }]);
+    expect(await refuses({ rate: "10" }, "rate")).toBe(true);
+  });
+
+  test("what the editor writes back, Isoloom reads as the same conditions", async () => {
+    await fc.assert(
+      fc.asyncProperty(taken(["us", "ms", "s"]), taken(["bit", "kbit", "mbit", "gbit", "bps", "kbps", "mbps", "gbps"]), async (delay, rate) => {
+        const read = conditionsOf({ delay, rate });
+        expect(read.problems).toEqual([]);
+        const written = tcOf(read.conditions);
+        expect(same(conditionsOf(written).conditions, read.conditions), JSON.stringify({ delay, rate, written })).toBe(true);
+        expect((await verdict(oneContainerTopology(written))).problems).toEqual([]);
+      }),
+      { numRuns: 40 },
+    );
+  });
+
+  test("a loss above 100% or a jitter without a delay is written for Isoloom to report, never changed", async () => {
+    expect(tcOf({ loss: 150, jitter: 5 })).toEqual({ loss: 150, jitter: "5ms" });
+    const problems = (await verdict(oneContainerTopology(tcOf({ loss: 150, jitter: 5 })))).problems.join("\n");
+    expect(problems).toContain("networks.lan.tc.loss");
+    expect(problems).toContain("networks.lan.tc.jitter");
   });
 });

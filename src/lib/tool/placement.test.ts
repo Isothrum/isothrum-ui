@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import type { LabNode } from "./model";
 import { paletteSpot, placeAppliance, placeMachine, placeSwitch, snapMoves } from "./placement";
 import { PRESETS, type Preset } from "./presets";
-import { autoRouter, lan, machine, switchNode } from "@/test/lab";
+import { autoRouter, lan, machine, switchNode } from "@/test/builders";
 
 const preset = (id: string): Preset => PRESETS.find((p) => p.id === id) ?? PRESETS[0];
 /** The 400 by 300 office LAN at the origin, selected. */

@@ -110,3 +110,27 @@ npm run check       # all three: what CI runs
 CI runs the check and nothing else: `ci.yml` on pull requests into `dev`, `gate.yml` before `main`
 and before a release (`publish-npm.yml` publishes nothing unless it passes), each on Linux, macOS
 and Windows.
+
+## Tests
+
+Where tests live and how they are named, so each behaviour has one obvious place:
+
+- **One test file per module, next to it, named after it**: `src/lib/tool/cables.ts` is tested in
+  `src/lib/tool/cables.test.ts`. A test file tests one module and a module has at most one test
+  file; a test of what a function does lives with that function, even when it goes through
+  another module to get there.
+- **Checks against Isoloom itself** (the engine shipped in `wasm/`) live in the test file of the
+  module whose values they check, in a `describe` that says so ("…, as Isoloom has them"): the OS
+  list in `os.test.ts`, link conditions in `conditions.test.ts`, ports in `ports.test.ts`.
+- **Shared helpers live in `src/test/`, named for what they give**, and no test file imports
+  another test file:
+  - `builders.ts`: nodes, cables and labs built from only what a test is about (`machine`, `lan`,
+    `cable`, `compile`…);
+  - `fixtures.ts`: fixed values tests compare with (stand-in text, expected networks);
+  - `arbitraries.ts`: fast-check generators of what the editor draws, for property tests;
+  - `shipped-engine.ts`: the shipped engine loaded in Node, and what it says of a topology.
+- **Names**: `describe` names the function (or the subject); each `test` says, in a sentence, the
+  behaviour it proves. Several cases of one behaviour are one `test.each` table, not one test each.
+- **Assert values, codes and types, not message text.** An error the code throws has a class and a
+  `code`; the words a user reads live in `src/lib/tool/text/` and are tested there.
+- **No network and no waiting**: `fetch` and storage are faked with `vi.stubGlobal`.

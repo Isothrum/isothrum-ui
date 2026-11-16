@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { insideLan, lanRect, lanUnder, lansAround, sideOnLan, snapToLanEdge, within } from "./geometry";
 import { MACHINE_H, MACHINE_W } from "./model";
-import { autoRouter, lan, machine } from "@/test/lab";
+import { autoRouter, lan, machine } from "@/test/builders";
 
 /** The 400 by 300 LAN at the origin. */
 const office = lan("office");

@@ -46,3 +46,20 @@ export interface Verdict {
 export async function verdict(topology: unknown): Promise<Verdict> {
   return JSON.parse((await shippedEngine()).plan_json(JSON.stringify(topology))) as Verdict;
 }
+
+/** The lists Isoloom offers: its OSes, network appliances and port protocols. */
+export interface Choices {
+  os: string[];
+  appliances: string[];
+  protocols: string[];
+}
+
+/** The engine's lists, to compare with the editor's. */
+export const engineChoices = async (): Promise<Choices> => JSON.parse((await shippedEngine()).choices_json()) as Choices;
+
+/** A topology of one container on LAN `lan`, with `tc` on the LAN and `services` on the machine. */
+export const oneContainerTopology = (tc?: unknown, services: unknown[] = []) => ({
+  name: "parity",
+  networks: { lan: { cidr: "10.10.1.0/24", ...(tc ? { tc } : {}) } },
+  nodes: { a: { kind: { container: { image: "alpine:3.20" } }, services, networks: { lan: null } } },
+});

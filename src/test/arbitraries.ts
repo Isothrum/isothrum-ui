@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import { DESIGNS, type Draft, type LinkConditions } from "@/lib/tool/model";
-import { cable, lan, machine } from "./lab";
+import { cable, lan, machine } from "./builders";
 
 /**
  * fast-check generators for the editor model's property tests: the values the editor itself

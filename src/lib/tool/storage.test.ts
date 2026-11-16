@@ -15,7 +15,7 @@ import {
   saveProject,
   setAutoStarts,
 } from "./storage";
-import { cable, lan, machine } from "@/test/lab";
+import { cable, lan, machine } from "@/test/builders";
 
 /** This browser's storage, faked: what it holds, by key. */
 function useStorage(entries: Record<string, string> = {}): Map<string, string> {
