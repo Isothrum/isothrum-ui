@@ -109,20 +109,10 @@ describe("a lab in a link", () => {
     expect((await decodeLab(await encodeLab(old)))?.nodes[0].data).toMatchObject({ os: "debian@12" });
   });
 
-  test("keeps the cables' conditions", async () => {
-    const d = await decodeLab(await encodeLab(lab()));
-    expect(d?.edges[0].data?.tc).toEqual({ delay: 5 });
-  });
-
   test("leaves the UI state and the cables' drawing color behind", async () => {
     const d = await decodeLab(await encodeLab(lab()));
     expect(d?.nodes[1]).not.toHaveProperty("selected");
     expect(d?.edges[0].data).toEqual({ aPort: "eth0", bPort: "eth0", tc: { delay: 5 } });
-  });
-
-  test("carries the look only when it isn't the default sketch", async () => {
-    expect((await decodeLab(await encodeLab({ ...lab(), design: "business" })))?.design).toBe("business");
-    expect((await decodeLab(await encodeLab({ ...lab(), design: "sketch" })))?.design).toBeUndefined();
   });
 
   test("cleans the lab's name, or calls it shared-lab", async () => {

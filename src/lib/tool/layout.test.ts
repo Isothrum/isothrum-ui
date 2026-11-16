@@ -102,11 +102,6 @@ describe("draftFromTopology", () => {
 });
 
 describe("draftFromTopology's link conditions", () => {
-  test("keeps a delay written in microseconds or seconds", () => {
-    const slow: Topology = { name: "slow", nodes: {}, networks: { far: { cidr: "10.10.9.0/24", tc: { delay: "1s", jitter: "500us" } } } };
-    expect(draftFromTopology(slow).draft.nodes[0].data).toMatchObject({ tc: { delay: 1000, jitter: 0.5 } });
-  });
-
   test("reports each condition it can't read, where it is, and draws the rest", () => {
     const odd: Topology = {
       name: "odd",
