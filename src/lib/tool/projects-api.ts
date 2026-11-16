@@ -2,7 +2,7 @@ import type { Draft } from "./model";
 
 /**
  * The site's project store (`/api/projects`), for a signed-in user: their projects, each with
- * its earlier versions. Errors carry the server's message, or the HTTP status.
+ * its earlier versions. A request the server refuses fails with a `ProjectsApiError`.
  */
 
 export interface ProjectSummary {
@@ -15,11 +15,31 @@ export interface ProjectVersion {
   savedAt: string;
 }
 
-/** The server's reason in an error response (`{ error }`), or the status when it gives none. */
-async function failure(r: Response): Promise<Error> {
+/** Why the store refused a request: not signed in, not the user's project, no such project, or anything else. */
+export type ProjectsApiErrorCode = "unauthenticated" | "forbidden" | "not-found" | "failed";
+
+const CODES: Partial<Record<number, ProjectsApiErrorCode>> = { 401: "unauthenticated", 403: "forbidden", 404: "not-found" };
+
+/** A request the project store refused: its HTTP status, its code, and the server's reason when it gives one (the message shows it, or the status). */
+export class ProjectsApiError extends Error {
+  readonly status: number;
+  readonly code: ProjectsApiErrorCode;
+  readonly reason: string | null;
+
+  constructor(status: number, reason: string | null) {
+    super(reason ?? String(status));
+    this.name = "ProjectsApiError";
+    this.status = status;
+    this.code = CODES[status] ?? "failed";
+    this.reason = reason;
+  }
+}
+
+/** The error for a refused request, with the server's reason from its body (`{ error }`). */
+async function failure(r: Response): Promise<ProjectsApiError> {
   const body = (await r.json().catch(() => null)) as { error?: unknown } | null;
   const reason = body?.error;
-  return new Error(typeof reason === "string" ? reason : String(r.status));
+  return new ProjectsApiError(r.status, typeof reason === "string" ? reason : null);
 }
 
 async function api<T>(method: string, path: string, body?: unknown): Promise<T> {

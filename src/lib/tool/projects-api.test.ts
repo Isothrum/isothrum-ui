@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { deleteProject, getVersion, listProjects, projectFromLink, saveProject } from "./projects-api";
+import { ProjectsApiError, deleteProject, getVersion, listProjects, projectFromLink, saveProject } from "./projects-api";
 
 /** Answers every request with `response`; the calls it gets. */
 function useServer(response: () => Response) {
@@ -38,11 +38,16 @@ describe("the project store", () => {
     await expect(deleteProject("p1")).resolves.toBeNull();
   });
 
-  test("fails with the server's reason, or its status when it gives none", async () => {
-    useServer(() => Response.json({ error: "sign in first" }, { status: 401 }));
-    await expect(listProjects()).rejects.toThrow("sign in first");
-    useServer(() => new Response("oops", { status: 500 }));
-    await expect(listProjects()).rejects.toThrow("500");
+  test.each([
+    { status: 401, body: { error: "no session" }, code: "unauthenticated", reason: "no session" },
+    { status: 403, body: { error: "not yours" }, code: "forbidden", reason: "not yours" },
+    { status: 404, body: {}, code: "not-found", reason: null },
+    { status: 500, body: "oops", code: "failed", reason: null },
+  ])("a refused request ($status) fails with a ProjectsApiError, code $code, and the server's reason when it gives one", async ({ status, body, code, reason }) => {
+    useServer(() => (typeof body === "string" ? new Response(body, { status }) : Response.json(body, { status })));
+    const error = await listProjects().catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ProjectsApiError);
+    expect(error).toMatchObject({ status, code, reason });
   });
 });
 

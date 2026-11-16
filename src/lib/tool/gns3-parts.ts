@@ -5,6 +5,7 @@ import { DEFAULT_OS } from "./os";
 
 /** The editor's words for what a GNS3 import can't carry over (see the editor's text). */
 export interface Gns3Text {
+  /** A `Gns3ImportError`'s words, by its code: `not-gns3`, `no-topology`. */
   notGns3: string;
   noTopology: string;
   cisco: (node: string, kind: string) => string;

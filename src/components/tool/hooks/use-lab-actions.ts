@@ -1,12 +1,17 @@
 import { useCallback } from "react";
 import { migrateEdges } from "@/lib/tool/cables";
 import { exampleLab } from "@/lib/tool/examples";
-import { fromGns3 } from "@/lib/tool/gns3-import";
+import { Gns3ImportError, fromGns3 } from "@/lib/tool/gns3-import";
 import { isLan, isMachine, type CableData, type Draft, type MachineData } from "@/lib/tool/model";
 import type { EditorText } from "@/lib/tool/text";
 import { replaceLab, type Lab } from "./use-lab";
 
 type FitView = (options: { padding: number; maxZoom: number }) => unknown;
+
+/** A file that isn't a GNS3 project, in the editor's words. */
+function gns3ErrorText(t: EditorText, err: Gns3ImportError): string {
+  return err.code === "not-gns3" ? t.gns3.notGns3 : t.gns3.noTopology;
+}
 
 /** After replacing the whole lab: fits once React Flow has measured the new nodes. */
 export function useFitWhenDrawn(fitView: FitView) {
@@ -50,7 +55,7 @@ export function useLabActions(lab: Lab, fitWhenDrawn: (options?: { padding: numb
         const lans = opened.nodes.filter(isLan).length;
         setToast([t.toasts.gns3Opened(opened.name, machines, lans), ...warnings, t.toasts.undoBringsBack].join(" "));
       } catch (err) {
-        setToast(err instanceof Error ? err.message : t.toasts.gns3Unreadable);
+        setToast(err instanceof Gns3ImportError ? gns3ErrorText(t, err) : t.toasts.gns3Unreadable);
       }
     },
   };

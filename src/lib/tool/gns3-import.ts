@@ -65,16 +65,30 @@ interface Import {
   text: Gns3Text;
 }
 
+/** Why a file isn't a GNS3 project: it isn't JSON, or it has no topology. */
+export type Gns3ImportErrorCode = "not-gns3" | "no-topology";
+
+/** A file that isn't a GNS3 project. `code` says why; the words a user reads are the editor's (`Gns3Text`). */
+export class Gns3ImportError extends Error {
+  readonly code: Gns3ImportErrorCode;
+
+  constructor(code: Gns3ImportErrorCode) {
+    super(code);
+    this.name = "Gns3ImportError";
+    this.code = code;
+  }
+}
+
 /** The project's nodes and its two-ended links, or why the file isn't a GNS3 project. */
-function parse(source: string, text: Gns3Text): { project: G3Project; g3nodes: G3Node[]; links: [string, string][] } {
+function parse(source: string): { project: G3Project; g3nodes: G3Node[]; links: [string, string][] } {
   let project: G3Project;
   try {
     project = JSON.parse(source) as G3Project;
   } catch {
-    throw new Error(text.notGns3);
+    throw new Gns3ImportError("not-gns3");
   }
   const g3nodes = project.topology?.nodes;
-  if (!Array.isArray(g3nodes)) throw new Error(text.noTopology);
+  if (!Array.isArray(g3nodes)) throw new Gns3ImportError("no-topology");
   const links = (project.topology?.links ?? [])
     .map((l) => (l.nodes ?? []).map((e) => e.node_id))
     .flatMap((ends): [string, string][] => (ends.length === 2 ? [[ends[0], ends[1]]] : []));
@@ -183,9 +197,12 @@ function importNotes(imp: Import, drawings: G3Drawing[]): void {
   }
 }
 
-/** `text`: the editor's words for what goes wrong (warnings and errors are shown as they are). */
+/**
+ * A GNS3 project as a lab, and warnings for what it can't carry over (in `text`, the editor's
+ * words). A file that isn't a GNS3 project throws a `Gns3ImportError`.
+ */
 export function fromGns3(source: string, text: Gns3Text): { lab: Draft; warnings: string[] } {
-  const { project, g3nodes, links } = parse(source, text);
+  const { project, g3nodes, links } = parse(source);
   const imp: Import = { g3nodes, links, nodes: [], names: new Set(), warnings: [], text };
   const lanOf = importLans(imp);
   const machines = importMachines(imp);

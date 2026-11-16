@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { tcProblemText } from "./conditions";
 import { draftFromTopology, type Topology } from "./layout";
 import { nodeName, type LabNode } from "./model";
 import { byId, compile } from "@/test/builders";
@@ -114,10 +115,7 @@ describe("draftFromTopology's link conditions", () => {
       links: [{ a: { node: "a", port: "eth0" }, b: { node: "b", port: "eth0" }, tc: { rate: "lots" } }],
     };
     const { draft: laid, problems } = draftFromTopology(odd);
-    expect(problems).toEqual([
-      "networks.far.tc.delay: `fast` isn't a time like 40ms, 500us or 1s; the drawing leaves it out",
-      "links[0].tc.rate: `lots` isn't a rate like 10mbit or 512kbit; the drawing leaves it out",
-    ]);
+    expect(problems).toEqual([tcProblemText("networks.far.tc", { field: "delay", value: "fast" }), tcProblemText("links[0].tc", { field: "rate", value: "lots" })]);
     expect(laid.nodes.find((n) => n.type === "lan")?.data).toMatchObject({ tc: { loss: 1 } });
     expect(laid.edges[0].data?.tc).toBeUndefined();
   });
