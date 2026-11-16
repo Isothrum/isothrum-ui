@@ -132,7 +132,8 @@ Where tests live and how they are named, so each behaviour has one obvious place
   - `shipped-engine.ts`: the shipped engine loaded in Node, and what it says of a topology;
   - `fake-engine.ts`: a stand-in for the engine port, for what the editor does with its answers;
   - `hooks.ts`: fakes and drivers for the hooks' tests (the desktop app's `invoke`, the project
-    store, keys, the fake clock).
+    store, keys, the fake clock);
+  - `setup.ts`: unmounts what a hook test rendered after each test.
 - **Names**: `describe` names the function (or the subject); each `test` says, in a sentence, the
   behaviour it proves. Several cases of one behaviour are one `test.each` table, not one test each.
 - **Assert values, codes and types, not message text.** An error the code throws has a class and a
@@ -143,3 +144,5 @@ Where tests live and how they are named, so each behaviour has one obvious place
   asked), not how the hook keeps its state.
 - **No network and no waiting**: `fetch`, storage and the desktop app are faked (`vi.stubGlobal`,
   `fakeInvoke`), and time is the fake clock (`vi.useFakeTimers()`, `elapse(ms)`): no test sleeps.
+  What finishes outside the clock (decompressing a share link, loading the engine) is awaited
+  with `waitFor`, which polls for the result rather than waiting a set time.

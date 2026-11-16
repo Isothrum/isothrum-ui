@@ -2,7 +2,8 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 // The editor's unit suite: the pure model and its helpers in Node, with no network. The engine
-// tests load the shipped WebAssembly (wasm/) the same way the browser does.
+// tests load the shipped WebAssembly (wasm/) the same way the browser does. The hooks' tests
+// choose a DOM themselves (`// @vitest-environment happy-dom`).
 export default defineConfig({
   resolve: {
     alias: {
@@ -14,5 +15,6 @@ export default defineConfig({
     unstubGlobals: true,
     unstubEnvs: true,
     include: ["src/**/*.test.ts"],
+    setupFiles: ["src/test/setup.ts"],
   },
 });
