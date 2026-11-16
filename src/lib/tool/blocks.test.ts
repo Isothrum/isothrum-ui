@@ -27,7 +27,7 @@ describe("deviceBlocks", () => {
   });
 
   test("names a saved device by its name, its hint what it runs", () => {
-    expect(options("mine")).toEqual([{ tool: "my-1", label: "gateway", hint: "your device: automatic router", preset: mine, key: null }]);
+    expect(options("mine")).toEqual([{ tool: "my-1", label: "gateway", hint: en.myDevice(en.myDeviceRouter), preset: mine, key: null }]);
   });
 });
 

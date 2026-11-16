@@ -51,12 +51,12 @@ describe("the OSes, as Isoloom has them", () => {
     expect([...OS_CHOICES].sort(byText)).toEqual([...(await engineChoices()).os].sort(byText));
   });
 
-  test("every OS the editor offers compiles, and the earlier spelling doesn't", async () => {
+  test("every OS the editor offers compiles, and the same lab with the earlier spelling doesn't", async () => {
+    const vmOn = (os: string) => verdict({ name: "os", networks: { lan: { cidr: "10.10.1.0/24" } }, nodes: { m: { kind: { vm: { os } }, networks: { lan: null } } } });
     for (const os of OS_CHOICES) {
-      const v = await verdict({ name: "os", networks: { lan: { cidr: "10.10.1.0/24" } }, nodes: { m: { kind: { vm: { os } }, networks: { lan: null } } } });
+      const v = await vmOn(os);
       expect(v.ok, `${os}: ${v.error ?? ""}`).toBe(true);
     }
-    const old = await verdict({ name: "os", nodes: { m: { kind: { vm: { os: "debian-12" } } } } });
-    expect(old.error).toContain("unknown OS `debian-12`");
+    expect((await vmOn("debian-12")).ok).toBe(false);
   });
 });

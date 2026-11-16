@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { fromGns3 } from "./gns3-import";
+import { Gns3ImportError, fromGns3 } from "./gns3-import";
 import { MACHINE_H, MACHINE_W, nodeName, type LabNode, type MachineData } from "./model";
 import { gns3Text } from "@/test/fixtures";
 
@@ -20,13 +20,24 @@ const sw = (node_id: string) => ({ node_id, node_type: "ethernet_switch", name: 
 const labOf = (nodes: object[], links: string[][] = [], drawings: object[] = [], name?: string) =>
   fromGns3(JSON.stringify({ name, topology: { nodes, links: links.map((ends) => ({ nodes: ends.map((node_id) => ({ node_id })) })), drawings } }), gns3Text).lab;
 
-describe("what isn't a GNS3 project", () => {
-  test("a file that isn't JSON", () => {
-    expect(() => fromGns3("not json", gns3Text)).toThrow("not gns3");
-  });
+/** What opening `file` throws (undefined when it opens). */
+function refusal(file: string): unknown {
+  try {
+    fromGns3(file, gns3Text);
+  } catch (e) {
+    return e;
+  }
+  return undefined;
+}
 
-  test("JSON with no topology", () => {
-    expect(() => fromGns3(JSON.stringify({ name: "x" }), gns3Text)).toThrow("no topology");
+describe("what isn't a GNS3 project", () => {
+  test.each([
+    ["a file that isn't JSON", "not json", "not-gns3"],
+    ["JSON with no topology", JSON.stringify({ name: "x" }), "no-topology"],
+  ])("%s is refused with a Gns3ImportError, code %s", (_, file, code) => {
+    const error = refusal(file);
+    expect(error).toBeInstanceOf(Gns3ImportError);
+    expect(error).toMatchObject({ code });
   });
 
   test("a project with no nodes opens empty, with a warning", () => {
