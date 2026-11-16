@@ -37,7 +37,7 @@ function useAddressTitle(data: MachineData) {
 const onlyAddressChars = (v: string) => v.replace(/[^0-9.]/g, "");
 
 /** An address, edited in place. */
-function Address({ id, data, net, ip, className }: { id: string; data: MachineData; net: string; ip: string; className?: string }) {
+function Address({ id, data, net, ip, className }: Readonly<{ id: string; data: MachineData; net: string; ip: string; className?: string }>) {
   const t = useText().canvas;
   const { pin } = useAddresses(id, data);
   return <InlineText allowEmpty label={t.addressOn(net)} value={ip} clean={onlyAddressChars} onCommit={(v) => { pin(net, ip, v); }} className={className} />;
@@ -53,7 +53,7 @@ function runsOf(data: MachineData): string | undefined {
  * Business: what an asset card says about a machine, in labelled rows: its addresses (two at
  * most, then how many more), and what it runs (its image or OS).
  */
-export function MachineFacts({ id, data }: { id: string; data: MachineData }) {
+export function MachineFacts({ id, data }: Readonly<{ id: string; data: MachineData }>) {
   const t = useText().canvas;
   const { ips, down } = useAddresses(id, data);
   const title = useAddressTitle(data);
@@ -92,7 +92,7 @@ export function MachineFacts({ id, data }: { id: string; data: MachineData }) {
 }
 
 /** The machine's IPs, under its box, as on a network diagram. */
-export function MachineAddresses({ id, data }: { id: string; data: MachineData }) {
+export function MachineAddresses({ id, data }: Readonly<{ id: string; data: MachineData }>) {
   const t = useText().canvas;
   const { ips, down } = useAddresses(id, data);
   const title = useAddressTitle(data);

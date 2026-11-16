@@ -10,7 +10,7 @@
 import { migrateEdges } from "./cables";
 import { gns3Cables } from "./gns3-cables";
 import { drawingNote, guessOs, type G3Drawing, type Gns3Text } from "./gns3-parts";
-import { LAN_BEHAVIOR, MACHINE_H, MACHINE_W, cleanName, uid, type Draft, type LabNode, type LanNode, type MachineData, type MachineNode, type NoteNode } from "./model";
+import { LAN_BEHAVIOR, MACHINE_H, MACHINE_W, cleanName, trimBoth, uid, type Draft, type LabNode, type LanNode, type MachineData, type MachineNode, type NoteNode } from "./model";
 
 interface G3Node {
   node_id: string;
@@ -83,9 +83,10 @@ function parse(source: string, text: Gns3Text): { project: G3Project; g3nodes: G
 
 /** A free name from GNS3's (spaces and underscores as dashes), `-2`, `-3`… when it is taken. */
 function nameFor(imp: Import, raw: string, fallback: string): string {
-  const base = cleanName(raw.replace(/[\s_]+/g, "-")).replace(/^-+|-+$/g, "") || fallback;
+  const base = trimBoth(cleanName(raw.replace(/[\s_]+/g, "-")), "-") || fallback;
   let name = base;
-  for (let i = 2; imp.names.has(name); i++) name = `${base}-${String(i)}`;
+  let i = 2;
+  while (imp.names.has(name)) name = `${base}-${String(i++)}`;
   imp.names.add(name);
   return name;
 }

@@ -1,4 +1,4 @@
-import { uid, type MachineData } from "./model";
+import { trimEnd, uid, type MachineData } from "./model";
 import { DEFAULT_OS } from "./os";
 
 /** The devices the toolbar places, and the ones saved from the canvas. */
@@ -52,7 +52,7 @@ export function shortcutOf(presetId: string): string | null {
 
 /** The device a number key picks: 1–9 the first nine, 0 the tenth. */
 export function presetForKey(key: string): Preset | undefined {
-  return /^[0-9]$/.test(key) ? PRESETS[(Number(key) + 9) % 10] : undefined;
+  return /^\d$/.test(key) ? PRESETS[(Number(key) + 9) % 10] : undefined;
 }
 
 /** A device from a machine on the canvas: everything but its name and fixed addresses. */
@@ -63,7 +63,7 @@ export function deviceFrom(m: MachineData): Preset {
     id: uid("my"),
     group: "mine",
     label: name,
-    prefix: name.replace(/\d+$/, "") || "device",
+    prefix: trimEnd(name, "0123456789") || "device",
     data,
   };
 }

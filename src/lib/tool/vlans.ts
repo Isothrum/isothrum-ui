@@ -1,4 +1,4 @@
-import { TRUNK, isSwitch, type CableEdge, type LabNode, type SwitchNode } from "./model";
+import { TRUNK, isSwitch, trimEnd, type CableEdge, type LabNode, type SwitchNode } from "./model";
 
 /** VLANs and switch ports. VLANs are lab-wide: `vlan10` is the same network on every switch. */
 
@@ -23,30 +23,29 @@ export function vlanOf(lanName: string): number | null {
   return m ? Number(m[1]) : null;
 }
 
-/** The port a switch handle stands for: `p3` -> its index, `trunk` -> the trunk. */
-function switchPort(handle: string | null | undefined): number | typeof TRUNK | null {
-  if (handle === TRUNK) return TRUNK;
+/** The index of the port a switch handle stands for (`p3` -> 2), or null (the trunk, or not a port). */
+function portIndex(handle: string | null | undefined): number | null {
   const m = handle ? /^p(\d+)$/.exec(handle) : null;
   return m ? Number(m[1]) - 1 : null;
 }
 
 /** Whether a switch handle is a trunk: the T port, or any port set to "trunk". */
 export function isTrunkPort(sw: SwitchNode, handle: string | null | undefined): boolean {
-  const port = switchPort(handle);
-  return port === TRUNK || (typeof port === "number" && sw.data.ports[port] === TRUNK);
+  const port = portIndex(handle);
+  return handle === TRUNK || (port !== null && sw.data.ports[port] === TRUNK);
 }
 
 /** The VLAN of an access port, or null (a trunk, an unassigned port, not a port). */
 export function accessVlan(sw: SwitchNode, handle: string | null | undefined): number | null {
-  const port = switchPort(handle);
-  const mode = typeof port === "number" ? sw.data.ports[port] : null;
+  const port = portIndex(handle);
+  const mode = port === null ? null : sw.data.ports[port];
   return typeof mode === "number" ? mode : null;
 }
 
 /** A port's label next to its cable: 1, 2… or T. */
 export function switchPortLabel(handle: string | null | undefined): string {
-  const p = switchPort(handle);
-  if (p === TRUNK) return "T";
+  if (handle === TRUNK) return "T";
+  const p = portIndex(handle);
   return p === null ? "" : String(p + 1);
 }
 
@@ -76,4 +75,4 @@ export function switchLans(nodes: LabNode[], edges: CableEdge[]): (switchId: str
 }
 
 /** The name Isoloom gives a trunk's interface: its LAN's, within Linux's limit (`sw1`, then `sw1.10`). */
-export const trunkInterface = (lan: string) => lan.slice(0, 10).replace(/-+$/, "");
+export const trunkInterface = (lan: string) => trimEnd(lan.slice(0, 10), "-");

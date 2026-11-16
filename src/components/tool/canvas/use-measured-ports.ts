@@ -10,7 +10,7 @@ export function usePortSides(id: string) {
   const sides = useContext(SidesContext);
   const facing = Object.keys(sides)
     .filter((k) => k.startsWith(`${id}:`))
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .join(",");
   useRemeasure(id, facing);
   return sides;

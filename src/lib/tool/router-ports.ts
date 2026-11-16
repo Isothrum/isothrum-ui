@@ -54,7 +54,9 @@ function portsOf(w: Wiring, r: MachineNode, ips: [string, string][]): RouterPort
  * with their colors; otherwise the cable's network.
  */
 function cabledPort(w: Wiring, r: MachineNode, e: CableEdge, view: RouterPorts, add: (name: string, net: string) => void): void {
-  const mine = e.source === r.id ? e.sourceHandle : e.target === r.id ? e.targetHandle : null;
+  let mine: string | null | undefined = null;
+  if (e.source === r.id) mine = e.sourceHandle;
+  else if (e.target === r.id) mine = e.targetHandle;
   if (!mine) return;
   const other = w.nodes.find((n) => n.id === (e.source === r.id ? e.target : e.source));
   const otherHandle = e.source === r.id ? e.targetHandle : e.sourceHandle;

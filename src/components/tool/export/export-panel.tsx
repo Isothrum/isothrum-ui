@@ -27,7 +27,7 @@ interface ExportPanelProps {
 }
 
 /** What to fix before the lab can be downloaded. */
-function FixFirst({ issues }: { issues: string[] }) {
+function FixFirst({ issues }: Readonly<{ issues: string[] }>) {
   const t = useText().exportPanel;
   return (
     <div className="rounded-lg border border-warning/40 bg-warning/5 p-4 text-sm">
@@ -44,7 +44,7 @@ function FixFirst({ issues }: { issues: string[] }) {
 }
 
 /** Where it runs: one folder per target in the zip, how to install Isoloom, each target's commands. */
-function WhereItRuns({ p, opened }: { p: ExportPanelProps; opened: Opened }) {
+function WhereItRuns({ p, opened }: Readonly<{ p: ExportPanelProps; opened: Opened }>) {
   const t = useText().exportPanel;
   return (
     <section className="flex flex-col gap-3">
@@ -66,7 +66,7 @@ function WhereItRuns({ p, opened }: { p: ExportPanelProps; opened: Opened }) {
 }
 
 /** isoloom.yml: the lab as one readable file, to keep in Git or edit by hand. */
-function SpecSection({ spec, show, onToggle }: { spec: string; show: boolean; onToggle: () => void }) {
+function SpecSection({ spec, show, onToggle }: Readonly<{ spec: string; show: boolean; onToggle: () => void }>) {
   const t = useText().exportPanel;
   return (
     <section className="flex flex-col gap-3">
@@ -94,7 +94,7 @@ function SpecSection({ spec, show, onToggle }: { spec: string; show: boolean; on
 }
 
 /** What the Export window shows: the lab's name, the downloads, where it runs and how. */
-export function ExportPanel(p: ExportPanelProps) {
+export function ExportPanel(p: Readonly<ExportPanelProps>) {
   const t = useText().exportPanel;
   const [openTarget, setOpenTarget] = useState<string | null>(null);
   const [openFile, setOpenFile] = useState<string | null>(null);

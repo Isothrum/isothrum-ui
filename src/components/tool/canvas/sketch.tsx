@@ -46,14 +46,14 @@ export function Sketch({
   stroke,
   opacity = 1,
   dash,
-}: {
+}: Readonly<{
   drawable: Drawable;
   fill?: string;
   stroke: string;
   opacity?: number;
   /** rough.js returns the path only: a dash pattern has to be applied here. */
   dash?: string;
-}) {
+}>) {
   return (
     <>
       {gen.toPaths(drawable).map((p, i) => (
@@ -85,7 +85,7 @@ interface FrameProps {
 }
 
 /** Business, network equipment: a dark faceplate with a screw at each end (its rack ears). */
-function Faceplate({ selected, dim }: { selected: boolean; dim: boolean }) {
+function Faceplate({ selected, dim }: Readonly<{ selected: boolean; dim: boolean }>) {
   return (
     <div
       aria-hidden
@@ -108,7 +108,7 @@ function Faceplate({ selected, dim }: { selected: boolean; dim: boolean }) {
  * diagram tool: rounded corners, a hairline border, a soft shadow (or, for network equipment, a
  * dark faceplate).
  */
-export function Frame({ drawable, fill, selected, dim = false, hardware = false }: FrameProps) {
+export function Frame({ drawable, fill, selected, dim = false, hardware = false }: Readonly<FrameProps>) {
   if (!useBusiness()) {
     return (
       <svg aria-hidden className={cn("pointer-events-none absolute inset-0 overflow-visible", dim && "opacity-40")} width="100%" height="100%">

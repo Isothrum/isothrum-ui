@@ -32,7 +32,9 @@ function presetText(p: Preset, t: EditorText): { label: string; hint: string } {
     const d = (t.devices as Partial<Record<string, { label: string; hint?: string }>>)[p.id];
     return d ? { label: d.label, hint: d.hint ?? runs(p) } : { label: p.id, hint: "" };
   }
-  const what = p.data.kind === "vm" ? p.data.os : p.data.kind === "router" ? t.myDeviceRouter : p.data.image;
+  let what = p.data.image;
+  if (p.data.kind === "vm") what = p.data.os;
+  else if (p.data.kind === "router") what = t.myDeviceRouter;
   return { label: p.label ?? p.prefix, hint: t.myDevice(what) };
 }
 

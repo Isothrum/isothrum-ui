@@ -7,7 +7,7 @@ import { useText } from "../text";
 import { field } from "./fields";
 
 /** How a cable or a LAN behaves: four optional numbers (empty: none). */
-export function ConditionsFields({ value, onChange }: { value: LinkConditions | undefined; onChange: (tc: LinkConditions | undefined) => void }) {
+export function ConditionsFields({ value, onChange }: Readonly<{ value: LinkConditions | undefined; onChange: (tc: LinkConditions | undefined) => void }>) {
   const t = useText().windows.conditions;
   const fields: [keyof LinkConditions, string, number][] = [
     ["delay", t.delay, 1],

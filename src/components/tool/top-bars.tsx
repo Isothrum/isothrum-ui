@@ -9,7 +9,7 @@ import { copyShareLink } from "./hooks/use-shared-link";
 import type { EditorModel } from "./hooks/use-editor";
 
 /** Top left: the menu, and where the lab is saved. */
-export function TopLeft({ e, onImportGns3 }: { e: EditorModel; onImportGns3: () => void }) {
+export function TopLeft({ e, onImportGns3 }: Readonly<{ e: EditorModel; onImportGns3: () => void }>) {
   const { projects, actions, lab, design, t } = e;
   const { proj } = projects;
   const share = () => copyShareLink({ name: lab.labName, nodes: lab.nodes, edges: lab.edges, design: design.design }, e.lang, e.setToast, t);
@@ -40,9 +40,11 @@ export function TopLeft({ e, onImportGns3 }: { e: EditorModel; onImportGns3: () 
 }
 
 /** The lab's status: valid, or how many things to fix (the engine still loading). */
-function StatusButton({ e }: { e: EditorModel }) {
+function StatusButton({ e }: Readonly<{ e: EditorModel }>) {
   const { issues, t } = e;
-  const label = !e.engine ? t.status.loading : issues.length ? t.status.toFix(issues.length) : t.status.valid;
+  let label = t.status.valid;
+  if (!e.engine) label = t.status.loading;
+  else if (issues.length) label = t.status.toFix(issues.length);
   return (
     <button type="button" onClick={() => { e.setStatusOpen((o) => !o); }} className={cn("flex h-9 items-center gap-1.5 rounded-lg border bg-popover px-3 text-xs font-medium shadow-sm", issues.length ? "text-warning" : "text-success")}>
       {issues.length ? <CircleAlert className="size-4" /> : <CircleCheck className="size-4" />}
@@ -52,7 +54,7 @@ function StatusButton({ e }: { e: EditorModel }) {
 }
 
 /** Desktop app: run the lab on this machine, or stop it. */
-function RunButton({ e }: { e: EditorModel }) {
+function RunButton({ e }: Readonly<{ e: EditorModel }>) {
   const { t, hasVms } = e;
   const { run, info } = e.desk.state;
   if (run === "running" || run === "stopping") {
@@ -68,7 +70,7 @@ function RunButton({ e }: { e: EditorModel }) {
       variant="outline"
       onClick={() => void e.run.runLab()}
       disabled={run === "starting" || !e.plan?.ok || e.issues.length > 0 || e.empty || (hasVms && !vagrant)}
-      title={hasVms ? (vagrant ? t.run.runVmsTitle : t.run.vmsTitle) : t.run.runTitle}
+      title={runTitle(t, hasVms, vagrant)}
       className="h-9 bg-popover shadow-sm"
     >
       <Play data-icon="inline-start" /> {run === "starting" ? t.run.starting : t.run.run}
@@ -76,8 +78,14 @@ function RunButton({ e }: { e: EditorModel }) {
   );
 }
 
+/** What Run does: run the lab, run its VMs, or why it can't (VMs without Vagrant). */
+function runTitle(t: EditorModel["t"], hasVms: boolean, vagrant: boolean): string {
+  if (!hasVms) return t.run.runTitle;
+  return vagrant ? t.run.runVmsTitle : t.run.vmsTitle;
+}
+
 /** Top right: the lab's status, Run (desktop app), and Export. */
-export function TopRight({ e }: { e: EditorModel }) {
+export function TopRight({ e }: Readonly<{ e: EditorModel }>) {
   return (
     <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
       {!e.empty && <StatusButton e={e} />}

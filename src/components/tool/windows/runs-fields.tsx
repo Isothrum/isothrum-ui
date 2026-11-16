@@ -9,7 +9,7 @@ import { area, field } from "./fields";
 type Change = (patch: Partial<MachineData>) => void;
 
 /** A Cisco OS in its container: which one, what it needs, and its own IOS configuration. */
-function ApplianceFields({ m, onChange }: { m: MachineData; onChange: Change }) {
+function ApplianceFields({ m, onChange }: Readonly<{ m: MachineData; onChange: Change }>) {
   const t = useText().inspector;
   return (
     <>
@@ -56,7 +56,7 @@ function ApplianceFields({ m, onChange }: { m: MachineData; onChange: Change }) 
 }
 
 /** A container: its image (none to type for Dynamips), and a Cisco OS's fields or whether it idles. */
-export function ContainerFields({ m, onChange }: { m: MachineData; onChange: Change }) {
+export function ContainerFields({ m, onChange }: Readonly<{ m: MachineData; onChange: Change }>) {
   const t = useText().inspector;
   return (
     <>
@@ -82,7 +82,7 @@ export function ContainerFields({ m, onChange }: { m: MachineData; onChange: Cha
 }
 
 /** A VM: its OS and its provisioning steps. */
-export function VmFields({ m, onChange }: { m: MachineData; onChange: Change }) {
+export function VmFields({ m, onChange }: Readonly<{ m: MachineData; onChange: Change }>) {
   const t = useText().inspector;
   return (
     <>
@@ -110,7 +110,7 @@ export function VmFields({ m, onChange }: { m: MachineData; onChange: Change }) 
 }
 
 /** A machine's services and whether the user lands on it (not an automatic router, nor an appliance). */
-export function ServiceFields({ m, onChange }: { m: MachineData; onChange: Change }) {
+export function ServiceFields({ m, onChange }: Readonly<{ m: MachineData; onChange: Change }>) {
   const t = useText().inspector;
   return (
     <>

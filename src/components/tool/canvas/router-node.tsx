@@ -27,7 +27,7 @@ function modelOf(data: MachineData, vm: string): string {
 type Interface = RouterPorts["interfaces"][number];
 
 /** One port of the faceplate: its name, its square in its network's color, its handle. */
-function RouterPort({ id, data, port, i, view }: { id: string; data: MachineData; port: string; i: number; view: RouterPorts }) {
+function RouterPort({ id, data, port, i, view }: Readonly<{ id: string; data: MachineData; port: string; i: number; view: RouterPorts }>) {
   const t = useText().canvas;
   const tl = useText().canvas.live;
   const sides = useContext(SidesContext);
@@ -38,7 +38,7 @@ function RouterPort({ id, data, port, i, view }: { id: string; data: MachineData
   const nets = view.interfaces.filter((f) => f.name === port || f.name.startsWith(`${port}.`));
   // A port is down when one of its networks' ports is (unknown counts as up).
   const down = nets.some((f) => live?.ports[`${data.name}/${f.network}`] === false);
-  const lines = nets.map((f: Interface) => `${f.name}: ${f.network}${f.ip ? ` · ${f.ip}` : ""}`).join("\n");
+  const lines = nets.map((f: Interface) => [`${f.name}: ${f.network}`, f.ip].filter(Boolean).join(" · ")).join("\n");
   return (
     <div>
       <span className={cn("absolute top-[26px] w-6 text-center font-mono text-[9px] text-muted-foreground", business && "text-slate-400")} style={{ left: x }}>
@@ -63,7 +63,7 @@ function RouterPort({ id, data, port, i, view }: { id: string; data: MachineData
 }
 
 /** Its interfaces, beside the faceplate: port, address, network. */
-function InterfaceList({ data, view }: { data: MachineData; view: RouterPorts }) {
+function InterfaceList({ data, view }: Readonly<{ data: MachineData; view: RouterPorts }>) {
   const live = useContext(LiveContext);
   return (
     <ul className="pointer-events-none absolute top-0 left-full ml-3 flex w-max flex-col gap-0.5 font-mono text-[10px]">

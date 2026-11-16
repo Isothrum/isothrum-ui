@@ -2,6 +2,7 @@ import fc from "fast-check";
 import { describe, expect, test } from "vitest";
 import { DEFAULT_OS, OS_CHOICES, currentMachine, currentOs } from "./os";
 import { machine } from "@/test/builders";
+import { byText } from "@/test/builders";
 import { engineChoices, verdict } from "@/test/shipped-engine";
 
 describe("currentOs", () => {
@@ -47,7 +48,7 @@ test("a new VM is Debian 12, one of the OSes offered", () => {
 
 describe("the OSes, as Isoloom has them", () => {
   test("every OS, and only those", async () => {
-    expect([...OS_CHOICES].sort()).toEqual([...(await engineChoices()).os].sort());
+    expect([...OS_CHOICES].sort(byText)).toEqual([...(await engineChoices()).os].sort(byText));
   });
 
   test("every OS the editor offers compiles, and the earlier spelling doesn't", async () => {

@@ -14,7 +14,7 @@ const STATUS_DOT: Record<Status, string> = {
 };
 
 /** A machine's status as a dot in its corner, its state in the tooltip. */
-export function StatusDot({ name, className }: { name: string; className?: string }) {
+export function StatusDot({ name, className }: Readonly<{ name: string; className?: string }>) {
   const t = useText().canvas.live;
   const m = useContext(LiveContext)?.machines[name];
   if (!m) return null;

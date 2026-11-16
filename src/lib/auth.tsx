@@ -19,16 +19,16 @@ export interface AuthSession {
 export interface AuthClient {
   /** React hook: the current session (or `null`), and whether it is still loading. */
   useSession: () => { data: AuthSession | null; isPending: boolean };
-  signOut: () => Promise<unknown> | void;
+  signOut: () => unknown;
   signIn: {
-    oauth2: (options: { providerId: string; callbackURL: string; errorCallbackURL: string }) => Promise<unknown> | void;
+    oauth2: (options: { providerId: string; callbackURL: string; errorCallbackURL: string }) => unknown;
   };
 }
 
 const AuthClientContext = createContext<AuthClient | null>(null);
 
 /** Provides the host's auth client to the editor. Omit it (or pass `null`) to run without accounts. */
-export function AuthClientProvider({ client, children }: { client: AuthClient | null; children: ReactNode }) {
+export function AuthClientProvider({ client, children }: Readonly<{ client: AuthClient | null; children: ReactNode }>) {
   return <AuthClientContext.Provider value={client}>{children}</AuthClientContext.Provider>;
 }
 
