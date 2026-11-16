@@ -24,7 +24,7 @@ function cablesOf(e: EditorModel, id: string): string[] {
 }
 
 /** A machine's window: the inspector, and (desktop app, lab running) its controls. */
-export function MachineWindow({ e, node }: { e: EditorModel; node: MachineNode }) {
+export function MachineWindow({ e, node }: Readonly<{ e: EditorModel; node: MachineNode }>) {
   const { lab, desk, actions } = e;
   const name = node.data.name;
   const act = desk.actions;
@@ -60,7 +60,7 @@ export function MachineWindow({ e, node }: { e: EditorModel; node: MachineNode }
  * A LAN's window: how it behaves (its name and block are edited on the canvas itself), and in the
  * desktop app capturing its traffic and suspending its links.
  */
-export function LanWindow({ e, lan }: { e: EditorModel; lan: LanNode }) {
+export function LanWindow({ e, lan }: Readonly<{ e: EditorModel; lan: LanNode }>) {
   const { lab, desk } = e;
   const name = lan.data.name;
   const running = desk.state.run === "running";
@@ -90,7 +90,7 @@ export function LanWindow({ e, lan }: { e: EditorModel; lan: LanNode }) {
 }
 
 /** Desktop app: capturing a cable's traffic, and suspending it (when it has a machine at an end). */
-function CableRunControls({ e, edge }: { e: EditorModel; edge: CableEdge }) {
+function CableRunControls({ e, edge }: Readonly<{ e: EditorModel; edge: CableEdge }>) {
   const { desk, lab } = e;
   const network = networkOfCable(edge.id, lab.nodes, lab.edges);
   if (!network) return null;
@@ -115,7 +115,7 @@ function CableRunControls({ e, edge }: { e: EditorModel; edge: CableEdge }) {
 }
 
 /** A cable's window: the port at each end, how it behaves, and removing it. */
-export function CableWindow({ e, edge, data }: { e: EditorModel; edge: CableEdge; data: NonNullable<CableEdge["data"]> }) {
+export function CableWindow({ e, edge, data }: Readonly<{ e: EditorModel; edge: CableEdge; data: NonNullable<CableEdge["data"]> }>) {
   const { lab, index, t } = e;
   const nameOf = (id: string) => nameById(lab.nodes, id);
   const ends = [

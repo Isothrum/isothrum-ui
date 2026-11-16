@@ -48,7 +48,7 @@ export function useLabActions(lab: Lab, fitWhenDrawn: (options?: { padding: numb
         fitWhenDrawn({ padding: 0.3, maxZoom: 1 });
         const machines = opened.nodes.filter(isMachine).length;
         const lans = opened.nodes.filter(isLan).length;
-        setToast(`${t.toasts.gns3Opened(opened.name, machines, lans)}${warnings.length ? ` ${warnings.join(" ")}` : ""} ${t.toasts.undoBringsBack}`);
+        setToast([t.toasts.gns3Opened(opened.name, machines, lans), ...warnings, t.toasts.undoBringsBack].join(" "));
       } catch (err) {
         setToast(err instanceof Error ? err.message : t.toasts.gns3Unreadable);
       }

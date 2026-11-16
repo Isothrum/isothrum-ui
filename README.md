@@ -102,9 +102,10 @@ validated against exactly what Isoloom accepts.
 
 ```sh
 npm run typecheck   # tsc, strict
+npm run lint        # ESLint: typescript-eslint strict type-checked, SonarJS, React hooks
 npm run test        # vitest (unit + engine against the shipped wasm)
 npm run build       # dist/index.js, dist/model.js, dist/types, dist/desktop
-npm run check       # all three: what CI runs
+npm run check       # all four: what CI runs
 ```
 
 CI runs the check and nothing else: `ci.yml` on pull requests into `dev`, `gate.yml` before `main`

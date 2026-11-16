@@ -50,7 +50,7 @@ const ROLE_ICONS: IconId[] = ["router", "laptop", "shield"];
  * A brand logo in its own color. On the dark theme the color is lifted toward white, so deep
  * brand colors (Alpine, Kali, PostgreSQL) stay readable while keeping their hue.
  */
-function BrandLogo({ icon, className }: { icon: SimpleIcon; className?: string }) {
+function BrandLogo({ icon, className }: Readonly<{ icon: SimpleIcon; className?: string }>) {
   const dark = isDark(icon.hex);
   return (
     <svg
@@ -79,12 +79,12 @@ export function DeviceIcon({
   data,
   size = "md",
   accent,
-}: {
+}: Readonly<{
   data: Pick<MachineData, "kind" | "image" | "os" | "icon">;
   size?: "sm" | "md";
   /** Business: the tile takes this tint, its glyph this color. */
   accent?: string;
-}) {
+}>) {
   const logo = logoFor(data) ?? (data.kind === "container" ? dockerLogo : null);
   const role = ROLE_ICONS.includes(data.icon);
   const Icon = ICONS[data.icon] ?? Container;

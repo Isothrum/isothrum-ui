@@ -220,8 +220,23 @@ export function cleanName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9-]/g, "");
 }
 
+/** `text` without the characters of `chars` at its end (`web12` without digits: `web`). */
+export function trimEnd(text: string, chars: string): string {
+  let end = text.length;
+  while (end > 0 && chars.includes(text[end - 1])) end--;
+  return text.slice(0, end);
+}
+
+/** `text` without the characters of `chars` at either end. */
+export function trimBoth(text: string, chars: string): string {
+  let start = 0;
+  while (start < text.length && chars.includes(text[start])) start++;
+  return trimEnd(text.slice(start), chars);
+}
+
 export function uid(prefix: string): string {
-  return `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+  const random = Array.from(crypto.getRandomValues(new Uint8Array(5)), (b) => (b % 36).toString(36)).join("");
+  return `${prefix}-${Date.now().toString(36)}${random}`;
 }
 
 /** The first `<prefix><n>` no machine or LAN uses yet. */

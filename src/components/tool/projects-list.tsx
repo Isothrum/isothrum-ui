@@ -11,7 +11,7 @@ import { useText } from "./text";
 const when = (iso: string) => new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 
 /** A project: its name (and whether it is the one open), when it was saved, opening and deleting it. */
-function ProjectRow({ p, current, onOpen, onDelete }: { p: ProjectSummary; current: ProjectRef | null; onOpen: () => void; onDelete: () => void }) {
+function ProjectRow({ p, current, onOpen, onDelete }: Readonly<{ p: ProjectSummary; current: ProjectRef | null; onOpen: () => void; onDelete: () => void }>) {
   const t = useText().projects;
   return (
     <li className="flex items-center gap-2 px-3 py-2">
@@ -33,7 +33,7 @@ function ProjectRow({ p, current, onOpen, onDelete }: { p: ProjectSummary; curre
 }
 
 /** The open project's earlier versions: listing them, and opening one. */
-function VersionHistory({ current, versions, setVersions, onOpenVersion }: { current: ProjectRef; versions: ProjectVersion[] | null; setVersions: (v: ProjectVersion[]) => void; onOpenVersion: (draft: Draft) => void }) {
+function VersionHistory({ current, versions, setVersions, onOpenVersion }: Readonly<{ current: ProjectRef; versions: ProjectVersion[] | null; setVersions: (v: ProjectVersion[]) => void; onOpenVersion: (draft: Draft) => void }>) {
   const t = useText().projects;
   return (
     <div className="flex flex-col gap-2">
@@ -61,7 +61,7 @@ function VersionHistory({ current, versions, setVersions, onOpenVersion }: { cur
 }
 
 /** The user's projects, to open or delete one; and the open project's earlier versions. */
-export function ProjectsList({ current, onOpen, onOpenVersion, onDeleted }: { current: ProjectRef | null; onOpen: (p: ProjectRef, draft: Draft) => void; onOpenVersion: (draft: Draft) => void; onDeleted: (id: string) => void }) {
+export function ProjectsList({ current, onOpen, onOpenVersion, onDeleted }: Readonly<{ current: ProjectRef | null; onOpen: (p: ProjectRef, draft: Draft) => void; onOpenVersion: (draft: Draft) => void; onDeleted: (id: string) => void }>) {
   const t = useText().projects;
   const [list, setList] = useState<ProjectSummary[] | null>(null);
   const [versions, setVersions] = useState<ProjectVersion[] | null>(null);

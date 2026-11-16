@@ -83,3 +83,6 @@ export interface Compiled {
 
 /** The lab as the engine reads it. */
 export const compile = (nodes: LabNode[], edges: CableEdge[] = [], name = "lab"): Compiled => JSON.parse(toTopology(name, nodes, edges)) as Compiled;
+
+/** Compares text for `sort`, the same everywhere. */
+export const byText = (a: string, b: string): number => a.localeCompare(b);

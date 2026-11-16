@@ -1,5 +1,5 @@
 import { migrateEdges } from "./cables";
-import { DESIGNS, LAN_BEHAVIOR, cleanName, type CableEdge, type Design, type Draft, type LabNode } from "./model";
+import { DESIGNS, LAN_BEHAVIOR, cleanName, trimEnd, type CableEdge, type Design, type Draft, type LabNode } from "./model";
 import { currentMachine } from "./os";
 
 /** A lab as it is kept: in storage, in a saved project, or in a share link. */
@@ -74,7 +74,7 @@ export function plainDraft(d: Draft): Draft {
 function toBase64Url(bytes: Uint8Array): string {
   let bin = "";
   for (const b of bytes) bin += String.fromCharCode(b);
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return trimEnd(btoa(bin).replace(/\+/g, "-").replace(/\//g, "_"), "=");
 }
 
 /**

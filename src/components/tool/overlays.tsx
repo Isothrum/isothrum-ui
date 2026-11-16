@@ -1,6 +1,7 @@
 "use client";
 
 import { LayoutTemplate, X } from "lucide-react";
+import { createElement } from "react";
 import { useBrandMark } from "@/lib/brand";
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { EditorModel } from "./hooks/use-editor";
@@ -28,7 +29,7 @@ function WelcomeHints() {
 }
 
 /** The empty canvas: who we are, where to start, and handwritten pointers to the controls. */
-function Welcome({ onExample, lang }: { onExample: () => void; lang: string }) {
+function Welcome({ onExample, lang }: Readonly<{ onExample: () => void; lang: string }>) {
   const t = useText().welcome;
   const LogoMark = useBrandMark();
   return (
@@ -37,7 +38,7 @@ function Welcome({ onExample, lang }: { onExample: () => void; lang: string }) {
       <div className="pointer-events-none absolute inset-0 z-0 grid place-items-center p-6">
         {/* Only the buttons take clicks: a drop or a click elsewhere goes to the canvas below. */}
         <div className="flex max-w-md flex-col items-center text-center">
-          <LogoMark className="size-14" />
+          {createElement(LogoMark, { className: "size-14" })}
           <p className="mt-4 font-heading text-4xl font-semibold lowercase">isothrum</p>
           <p className="mt-3 text-muted-foreground text-pretty">{t.pitch}</p>
           <div className="pointer-events-auto mt-6 flex flex-wrap justify-center gap-2">
@@ -55,7 +56,7 @@ function Welcome({ onExample, lang }: { onExample: () => void; lang: string }) {
 }
 
 /** Desktop app: a newer release is out; restarting installs it. */
-function UpdateBanner({ e, version }: { e: EditorModel; version: string }) {
+function UpdateBanner({ e, version }: Readonly<{ e: EditorModel; version: string }>) {
   const t = e.t.update;
   const { invoke, updating, setUpdating, setUpdate } = e.desk.state;
   async function install() {
@@ -82,7 +83,7 @@ function UpdateBanner({ e, version }: { e: EditorModel; version: string }) {
 }
 
 /** What floats over the canvas's bottom: the welcome, an update, a toast, an engine that didn't load. */
-export function Overlays({ e }: { e: EditorModel }) {
+export function Overlays({ e }: Readonly<{ e: EditorModel }>) {
   const { update } = e.desk.state;
   return (
     <>

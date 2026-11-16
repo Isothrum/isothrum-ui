@@ -18,7 +18,7 @@ interface Point {
 
 const translate = (p: Point) => `translate(-50%, -50%) translate(${String(p.x)}px, ${String(p.y)}px)`;
 
-function PortLabel({ at, text }: { at: Point; text?: string }) {
+function PortLabel({ at, text }: Readonly<{ at: Point; text?: string }>) {
   if (!text) return null;
   return (
     <div style={{ transform: translate(at) }} className="nodrag nopan pointer-events-none absolute rounded-sm border bg-card px-1 py-px font-mono text-[10px] leading-none text-muted-foreground">
@@ -38,10 +38,7 @@ function cableGeometry(p: EdgeProps<CableEdge>, business: boolean) {
     ? getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, borderRadius: 10, offset: 18 })
     : getStraightPath({ sourceX, sourceY, targetX, targetY });
   const along = (f: number) => ({ x: sourceX + (targetX - sourceX) * f, y: sourceY + (targetY - sourceY) * f });
-  const off = (x: number, y: number, side: Position) => ({
-    x: x + (side === Position.Left ? -18 : side === Position.Right ? 18 : 0),
-    y: y + (side === Position.Top ? -14 : side === Position.Bottom ? 14 : 0),
-  });
+  const off = (x: number, y: number, side: Position) => ({ x: x + LABEL_OFFSET[side].x, y: y + LABEL_OFFSET[side].y });
   return {
     path,
     middle: business ? { x: midX, y: midY } : along(0.5),
@@ -51,7 +48,7 @@ function cableGeometry(p: EdgeProps<CableEdge>, business: boolean) {
 }
 
 /** The running lab: a cable says whether it carries traffic. */
-function LiveBadge({ live, at }: { live: Exclude<CableStatus, "unknown">; at: Point }) {
+function LiveBadge({ live, at }: Readonly<{ live: Exclude<CableStatus, "unknown">; at: Point }>) {
   const t = useText().canvas.live;
   return (
     <div title={t.cable[live]} style={{ transform: translate(at) }} className="nodrag nopan pointer-events-auto absolute">
@@ -67,7 +64,7 @@ function LiveBadge({ live, at }: { live: Exclude<CableStatus, "unknown">; at: Po
 }
 
 /** The line itself, in the color of the VLAN or network on the port it's plugged into. */
-function CableLine({ p, path, live, stroke }: { p: EdgeProps<CableEdge>; path: string; live: CableStatus | undefined; stroke: string }) {
+function CableLine({ p, path, live, stroke }: Readonly<{ p: EdgeProps<CableEdge>; path: string; live: CableStatus | undefined; stroke: string }>) {
   const business = useBusiness();
   const sketch = useSketch();
   const { id, sourceX, sourceY, targetX, targetY, selected } = p;
@@ -79,8 +76,30 @@ function CableLine({ p, path, live, stroke }: { p: EdgeProps<CableEdge>; path: s
   if (business) {
     return <path d={path} fill="none" style={{ stroke, strokeWidth: selected ? 2.25 : 1.5, strokeLinejoin: "round", strokeDasharray: broken ? "6 5" : undefined, opacity: live === "down" ? 0.4 : 1 }} />;
   }
-  const opacity = live === "down" ? 0.35 : selected ? 1 : p.data?.color ? 0.95 : 0.7;
+  const opacity = sketchOpacity(live, selected, !!p.data?.color);
   return <Sketch drawable={line} stroke={stroke} opacity={opacity} dash={broken ? "7 6" : undefined} />;
+}
+
+/** How far a port's label sits from its end, by the side the cable leaves from. */
+const LABEL_OFFSET: Record<Position, { x: number; y: number }> = {
+  [Position.Left]: { x: -18, y: 0 },
+  [Position.Right]: { x: 18, y: 0 },
+  [Position.Top]: { x: 0, y: -14 },
+  [Position.Bottom]: { x: 0, y: 14 },
+};
+
+/** The sketched line's opacity: faint when down, full when selected, a colored (VLAN) cable stronger. */
+function sketchOpacity(live: CableStatus | undefined, selected: boolean | undefined, colored: boolean): number {
+  if (live === "down") return 0.35;
+  if (selected) return 1;
+  return colored ? 0.95 : 0.7;
+}
+
+/** A cable's color: the signal color when selected, red when cut, else its own (a VLAN's) or the theme's. */
+function cableStroke(selected: boolean | undefined, live: CableStatus | undefined, color: string | undefined, business: boolean): string {
+  if (selected) return "var(--signal)";
+  if (live === "cut") return "var(--destructive)";
+  return color ?? (business ? "#64748b" : "var(--foreground)");
 }
 
 /** A cable: a hand-drawn line with the port name next to each end, as in GNS3. */
@@ -89,7 +108,7 @@ export function CableEdgeView(p: EdgeProps<CableEdge>) {
   const business = useBusiness();
   const { path, middle, a, b } = cableGeometry(p, business);
   const live = useContext(LiveContext)?.cables[id];
-  const stroke = selected ? "var(--signal)" : live === "cut" ? "var(--destructive)" : (data?.color ?? (business ? "#64748b" : "var(--foreground)"));
+  const stroke = cableStroke(selected, live, data?.color, business);
   const conditions = conditionsLabel(data?.tc);
   return (
     <>

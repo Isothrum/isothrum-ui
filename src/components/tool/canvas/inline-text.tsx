@@ -44,7 +44,7 @@ function InlineField({ draft, setDraft, done, clean, className, label }: { draft
  * Text edited in place, as in Excalidraw: double-click to edit, Enter or a click elsewhere to
  * keep, Escape to drop. `nodrag` so typing never moves the node.
  */
-export function InlineText({ value, onCommit, clean, className, label, allowEmpty = false }: InlineTextProps) {
+export function InlineText({ value, onCommit, clean, className, label, allowEmpty = false }: Readonly<InlineTextProps>) {
   const t = useText().canvas;
   const [draft, setDraft] = useState<string | null>(null);
   if (draft === null) {

@@ -9,7 +9,7 @@ import type { EditorModel } from "../hooks/use-editor";
 import { LabStatus } from "./lab-status";
 
 /** Several things selected: what they are, and deleting them all. */
-export function SelectionWindow({ e }: { e: EditorModel }) {
+export function SelectionWindow({ e }: Readonly<{ e: EditorModel }>) {
   const { t, lab } = e;
   const { selectedNodes, selectedEdges, count } = e.selection;
   return (
@@ -42,7 +42,7 @@ export function SelectionWindow({ e }: { e: EditorModel }) {
 }
 
 /** The lab at a glance: how many containers, VMs, LANs and cables, and what to fix. */
-export function StatusWindow({ e }: { e: EditorModel }) {
+export function StatusWindow({ e }: Readonly<{ e: EditorModel }>) {
   const { t, lab, machines, issues } = e;
   const vlans = new Set(lab.nodes.filter(isSwitch).flatMap((sw) => sw.data.vlans.map((v) => v.id)));
   const counts = [
@@ -97,7 +97,7 @@ function runLine(e: EditorModel): string {
 }
 
 /** Desktop app: the lab running on this machine, its log, and starting it with the app. */
-export function RunWindow({ e }: { e: EditorModel }) {
+export function RunWindow({ e }: Readonly<{ e: EditorModel }>) {
   const { t, desk, lab } = e;
   const { info, run } = desk.state;
   const { autoStart, setAutoStart } = desk.autoStart;

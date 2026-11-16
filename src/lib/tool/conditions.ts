@@ -1,4 +1,4 @@
-import type { LinkConditions } from "./model";
+import { trimEnd, type LinkConditions } from "./model";
 
 /** Isoloom's `tc` for a slow or lossy link, as the engine's topology takes it. */
 export interface Tc {
@@ -84,19 +84,18 @@ const RATE: ReadonlyMap<string, Scale> = new Map([
 
 const UNITS: Record<MeasuredField, ReadonlyMap<string, Scale>> = { delay: TIME, jitter: TIME, rate: RATE };
 
-/**
- * A number and the letters after it, split as Isoloom splits a `tc` value: the letters at the end
- * are the unit, and what comes before is a number as Rust reads one (a sign, digits with or
- * without a point, an exponent: `40`, `-0.5`, `.5`, `5.`, `1E-3`).
- */
-const MEASURE = /^([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)([A-Za-z]*)$/;
+const LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/** A number as Rust reads one: a sign, digits with or without a point, an exponent (`40`, `-0.5`, `.5`, `5.`, `1E-3`). */
+const NUMBER = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
 
 /** `40ms` -> 40, `500us` -> 0.5, `1gbit` -> 1000: in the editor's unit, or undefined when `v` isn't a number and one of `units` (Isoloom's, case and all), or too large to be one. */
 function measure(v: string, units: ReadonlyMap<string, Scale>): number | undefined {
-  const m = MEASURE.exec(v);
-  const scale = m ? units.get(m[2]) : undefined;
-  if (!m || !scale) return undefined;
-  const n = (Number(m[1]) * scale[0]) / scale[1];
+  // Split as Isoloom splits a `tc` value: the letters at the end are the unit, the rest the number.
+  const number = trimEnd(v, LETTERS);
+  const scale = units.get(v.slice(number.length));
+  if (!scale || !NUMBER.test(number)) return undefined;
+  const n = (Number(number) * scale[0]) / scale[1];
   return Number.isFinite(n) ? n : undefined;
 }
 

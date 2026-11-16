@@ -9,7 +9,7 @@ import { useText } from "../text";
 import { Sketch, gen, seedOf, useSketch } from "./sketch";
 
 /** When selected, a small bar picks the note's shape and color. */
-function NoteBar({ id, data, visible }: { id: string; data: NoteNode["data"]; visible: boolean }) {
+function NoteBar({ id, data, visible }: Readonly<{ id: string; data: NoteNode["data"]; visible: boolean }>) {
   const t = useText().canvas;
   const { updateNodeData } = useReactFlow();
   const shapes: [NoteShape, LucideIcon, string][] = [
@@ -42,7 +42,7 @@ function NoteBar({ id, data, visible }: { id: string; data: NoteNode["data"]; vi
 }
 
 /** The note's text; double-click to write (Enter a new line; Escape or Ctrl/⌘ Enter is done). */
-function NoteText({ id, data, selected, draft, setDraft }: { id: string; data: NoteNode["data"]; selected: boolean; draft: string | null; setDraft: (d: string | null) => void }) {
+function NoteText({ id, data, selected, draft, setDraft }: Readonly<{ id: string; data: NoteNode["data"]; selected: boolean; draft: string | null; setDraft: (d: string | null) => void }>) {
   const t = useText().canvas;
   const { updateNodeData } = useReactFlow();
   return (

@@ -8,10 +8,17 @@ const DOT: Record<Status, string> = { up: "bg-success", starting: "bg-warning", 
 
 type Port = EnvironmentLive["ports"][number];
 
+/** A port's state in words: unknown, up, cut by the user, or down. */
+function portTitle(t: ReturnType<typeof useText>["canvas"]["live"], up: boolean | null, cut: boolean): string {
+  if (up === null) return t.portUnknown;
+  if (up) return t.portUp;
+  return cut ? t.cable.cut : t.portDown;
+}
+
 /** A port of a running machine: its network (and interface), green when up, struck through when down. */
-function PortChip({ p, cut }: { p: Port; cut: boolean }) {
+function PortChip({ p, cut }: Readonly<{ p: Port; cut: boolean }>) {
   const t = useText().canvas.live;
-  const title = p.up === null ? t.portUnknown : p.up ? t.portUp : cut ? t.cable.cut : t.portDown;
+  const title = portTitle(t, p.up, cut);
   return (
     <span
       title={title}
@@ -24,7 +31,7 @@ function PortChip({ p, cut }: { p: Port; cut: boolean }) {
 }
 
 /** One machine now: its state (and health), then its ports. */
-function MachineLine({ name, l, live, cut }: { name: string; l: MachineLive; live: EnvironmentLive; cut: SuspendedLink[] }) {
+function MachineLine({ name, l, live, cut }: Readonly<{ name: string; l: MachineLive; live: EnvironmentLive; cut: SuspendedLink[] }>) {
   const t = useText();
   const status = machineStatus(l);
   return (
@@ -49,7 +56,7 @@ function MachineLine({ name, l, live, cut }: { name: string; l: MachineLive; liv
 }
 
 /** Desktop only: the running lab now, machine by machine, with each one's ports. */
-export function LabStatus({ live, cut }: { live: EnvironmentLive; cut: SuspendedLink[] }) {
+export function LabStatus({ live, cut }: Readonly<{ live: EnvironmentLive; cut: SuspendedLink[] }>) {
   const t = useText();
   const machines = Object.entries(live.machines);
   const up = machines.filter(([, l]) => machineStatus(l) === "up").length;

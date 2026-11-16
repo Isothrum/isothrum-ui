@@ -11,7 +11,7 @@ import { ContainerFields, ServiceFields, VmFields } from "./runs-fields";
 type Change = (patch: Partial<MachineData>) => void;
 
 /** Its name, and what it runs as: an automatic router (a router's only), a container or a VM. */
-function NameAndKind({ m, onChange }: { m: MachineData; onChange: Change }) {
+function NameAndKind({ m, onChange }: Readonly<{ m: MachineData; onChange: Change }>) {
   const t = useText().inspector;
   return (
     <>
@@ -39,7 +39,7 @@ function NameAndKind({ m, onChange }: { m: MachineData; onChange: Change }) {
 }
 
 /** The machine's cables, as `its port → the other end's name and port`. */
-function CableList({ cables }: { cables: string[] }) {
+function CableList({ cables }: Readonly<{ cables: string[] }>) {
   const t = useText().inspector;
   return (
     <div>
@@ -58,7 +58,7 @@ function CableList({ cables }: { cables: string[] }) {
 }
 
 /** A machine's window: its name and kind, what it runs, its services, its cables. */
-export function MachineInspector({ node, cables, onChange, onDelete, onSaveDevice }: { node: MachineNode; cables: string[]; onChange: Change; onDelete: () => void; onSaveDevice: () => void }) {
+export function MachineInspector({ node, cables, onChange, onDelete, onSaveDevice }: Readonly<{ node: MachineNode; cables: string[]; onChange: Change; onDelete: () => void; onSaveDevice: () => void }>) {
   const t = useText().inspector;
   const m = node.data;
   return (

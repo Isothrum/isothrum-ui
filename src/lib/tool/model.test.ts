@@ -22,7 +22,7 @@ import {
   uid,
   unselected,
 } from "./model";
-import { autoRouter, lan, machine, note, realRouter, switchNode } from "@/test/builders";
+import { autoRouter, byText, lan, machine, note, realRouter, switchNode } from "@/test/builders";
 import { engineChoices } from "@/test/shipped-engine";
 
 describe("applianceInterface", () => {
@@ -130,6 +130,6 @@ test("unselected clears the selection of every node", () => {
 
 describe("the network appliances, as Isoloom has them", () => {
   test("every network appliance, and only those", async () => {
-    expect(APPLIANCES.map((a) => a.id).sort()).toEqual([...(await engineChoices()).appliances].sort());
+    expect(APPLIANCES.map((a) => a.id).sort(byText)).toEqual([...(await engineChoices()).appliances].sort(byText));
   });
 });

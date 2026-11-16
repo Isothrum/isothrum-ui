@@ -8,7 +8,7 @@ import type { LinkAction, MachineAction } from "./hooks/use-machine-actions";
 import { useText } from "./text";
 
 /** A menu at the pointer (a right-click): Escape or a click elsewhere closes it. */
-function ContextMenu({ at, title, onClose, children }: { at: { x: number; y: number }; title: string; onClose: () => void; children: ReactNode }) {
+function ContextMenu({ at, title, onClose, children }: Readonly<{ at: { x: number; y: number }; title: string; onClose: () => void; children: ReactNode }>) {
   useEffect(() => {
     const esc = (e: globalThis.KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -42,7 +42,7 @@ function ContextMenu({ at, title, onClose, children }: { at: { x: number; y: num
   );
 }
 
-function MenuItem({ icon: Icon, label, enabled = true, onClick }: { icon: LucideIcon; label: string; enabled?: boolean; onClick: () => void }) {
+function MenuItem({ icon: Icon, label, enabled = true, onClick }: Readonly<{ icon: LucideIcon; label: string; enabled?: boolean; onClick: () => void }>) {
   return (
     <button
       type="button"
@@ -59,7 +59,7 @@ function MenuItem({ icon: Icon, label, enabled = true, onClick }: { icon: Lucide
 const Divider = () => <div className="my-1 h-px bg-border" />;
 
 /** Desktop only: a machine's menu, on a right-click, as in GNS3. */
-function MachineMenu({ at, running, state, onClose, onConsole, onDisplay, onAction }: { at: MachineMenuAt; running: boolean; state: string | undefined; onClose: () => void; onConsole: () => void; onDisplay: () => void; onAction: (action: MachineAction) => void }) {
+function MachineMenu({ at, running, state, onClose, onConsole, onDisplay, onAction }: Readonly<{ at: MachineMenuAt; running: boolean; state: string | undefined; onClose: () => void; onConsole: () => void; onDisplay: () => void; onAction: (action: MachineAction) => void }>) {
   const t = useText().machineRun;
   const up = running && state === "running";
   return (
@@ -84,7 +84,7 @@ function MachineMenu({ at, running, state, onClose, onConsole, onDisplay, onActi
  * Desktop only: a cable's or a LAN's menu, on a right-click, as in GNS3: capture its traffic,
  * suspend or resume it (a cable's ends, or every link of a LAN).
  */
-function LinkMenu({ at, running, capturing, suspended, onClose, onCapture, onLink }: { at: LinkMenuAt; running: boolean; capturing: boolean; suspended: boolean; onClose: () => void; onCapture: () => void; onLink: (action: LinkAction) => void }) {
+function LinkMenu({ at, running, capturing, suspended, onClose, onCapture, onLink }: Readonly<{ at: LinkMenuAt; running: boolean; capturing: boolean; suspended: boolean; onClose: () => void; onCapture: () => void; onLink: (action: LinkAction) => void }>) {
   const t = useText();
   const ends = at.machines;
   const all = !ends;
@@ -107,7 +107,7 @@ function LinkMenu({ at, running, capturing, suspended, onClose, onCapture, onLin
 }
 
 /** The right-click menus of the running lab (desktop app only). */
-export function RunningLabMenus({ e }: { e: EditorModel }) {
+export function RunningLabMenus({ e }: Readonly<{ e: EditorModel }>) {
   const { invoke, desk } = e;
   const { machineMenu, linkMenu, setMachineMenu, setLinkMenu } = desk.menus;
   const running = desk.state.run === "running";

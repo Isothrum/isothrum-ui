@@ -20,7 +20,7 @@ const nodeTypes: NodeTypes = { machine: MachineNodeView, lan: LanNodeView, switc
 const edgeTypes: EdgeTypes = { cable: CableEdgeView };
 
 /** What the canvas's nodes and cables read: the look, addresses, port sides and the running lab. */
-function CanvasContexts({ e, children }: { e: EditorModel; children: ReactNode }) {
+function CanvasContexts({ e, children }: Readonly<{ e: EditorModel; children: ReactNode }>) {
   return (
     <DesignContext.Provider value={e.design.design}>
       <AddressesContext.Provider value={e.addresses}>
@@ -63,7 +63,7 @@ function runningLabMenus(e: EditorModel) {
 }
 
 /** Undo and redo, beside the zoom controls. */
-function HistoryButtons({ e }: { e: EditorModel }) {
+function HistoryButtons({ e }: Readonly<{ e: EditorModel }>) {
   const { step, canUndo, canRedo } = e.history;
   const t = e.t.toolbar;
   return (
@@ -79,7 +79,7 @@ function HistoryButtons({ e }: { e: EditorModel }) {
 }
 
 /** The canvas: React Flow with the lab's nodes and cables, in Excalidraw's two modes. */
-export function FlowCanvas({ e }: { e: EditorModel }) {
+export function FlowCanvas({ e }: Readonly<{ e: EditorModel }>) {
   const { lab, tools, cabling, carry, placement } = e;
   const select = tools.mode === "select";
   const menus = runningLabMenus(e);

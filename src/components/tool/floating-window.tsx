@@ -42,7 +42,7 @@ function useWindowDrag(width: number, side: "left" | "right") {
  * A window floating over the canvas: drag it by its title bar, close it with the cross. It opens
  * against the left or right edge and stays inside the screen while dragged.
  */
-export function FloatingWindow({ title, side, width, onClose, children, className }: { title: ReactNode; side: "left" | "right"; width: number; onClose: () => void; children: ReactNode; className?: string }) {
+export function FloatingWindow({ title, side, width, onClose, children, className }: Readonly<{ title: ReactNode; side: "left" | "right"; width: number; onClose: () => void; children: ReactNode; className?: string }>) {
   const t = useText();
   const { ref, pos, handlers } = useWindowDrag(width, side);
   return (

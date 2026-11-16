@@ -1,6 +1,6 @@
 name: CI
 
-# Pull requests into dev, and pushes to it: the check (`npm run check`: types, tests, the build)
+# Pull requests into dev, and pushes to it: the check (`npm run check`: types, lint, tests, the build)
 # on Linux, macOS and Windows, the command a contributor runs. Before main, gate.yml runs it too.
 #
 # A job here only sets up Node and runs the check: the two can't drift.

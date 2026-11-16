@@ -2,7 +2,7 @@
  * Business: a socket's status light, in its VLAN's or network's color (a trunk's stripes), lit
  * when something is assigned to the port; dark when nothing is.
  */
-export function PortLed({ color }: { color: string | null }) {
+export function PortLed({ color }: Readonly<{ color: string | null }>) {
   return (
     <>
       {/* The socket's latch. */}

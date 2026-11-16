@@ -19,7 +19,7 @@ interface Props {
 }
 
 /** A console, its screen, and starting, restarting or stopping it. */
-function RunButtons({ state, busy, onConsole, onDisplay, onAction }: Pick<Props, "state" | "busy" | "onConsole" | "onDisplay" | "onAction">) {
+function RunButtons({ state, busy, onConsole, onDisplay, onAction }: Readonly<Pick<Props, "state" | "busy" | "onConsole" | "onDisplay" | "onAction">>) {
   const t = useText().machineRun;
   const running = state === "running";
   return (
@@ -51,7 +51,7 @@ function RunButtons({ state, busy, onConsole, onDisplay, onAction }: Pick<Props,
 const when = (created: number) => new Date(created * 1000).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
 
 /** The machine's snapshots, newest first: restore one, delete one, or go back to its own image. */
-function SnapshotList({ snapshots, busy, onUse, onDeleteSnapshot }: Pick<Props, "snapshots" | "busy" | "onUse" | "onDeleteSnapshot">) {
+function SnapshotList({ snapshots, busy, onUse, onDeleteSnapshot }: Readonly<Pick<Props, "snapshots" | "busy" | "onUse" | "onDeleteSnapshot">>) {
   const t = useText().machineRun;
   if (snapshots.length === 0) return <p className="text-xs text-muted-foreground">{t.noSnapshots}</p>;
   return (
@@ -80,13 +80,19 @@ function SnapshotList({ snapshots, busy, onUse, onDeleteSnapshot }: Pick<Props, 
   );
 }
 
+/** A machine's state in words: running, stopped, or not known (no state read yet). */
+function stateText(t: ReturnType<typeof useText>["machineRun"], running: boolean, state: string | undefined): string {
+  if (running) return t.running;
+  return state ? t.stopped : t.unknown;
+}
+
 /** In the desktop app, for a machine of the running lab: its state, its controls, its snapshots. */
-export function MachineControls(p: Props) {
+export function MachineControls(p: Readonly<Props>) {
   const t = useText().machineRun;
   const running = p.state === "running";
   return (
     <div className="mt-4 flex flex-col gap-2 border-t pt-3 text-sm">
-      <p className="text-xs text-muted-foreground">{running ? t.running : p.state ? t.stopped : t.unknown}</p>
+      <p className="text-xs text-muted-foreground">{stateText(t, running, p.state)}</p>
       <RunButtons state={p.state} busy={p.busy} onConsole={p.onConsole} onDisplay={p.onDisplay} onAction={p.onAction} />
       <div className="mt-2 flex flex-col gap-1.5">
         <div className="flex items-center justify-between gap-2">
