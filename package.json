@@ -1,6 +1,6 @@
 {
   "name": "@isothrum/editor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The Isothrum lab editor: a React canvas that draws infrastructure labs and compiles them to an Isoloom spec, plus the Isothrum WebAssembly engine. Shared by the Isothrum desktop app and isothrum.com.",
   "license": "Apache-2.0",
   "type": "module",
