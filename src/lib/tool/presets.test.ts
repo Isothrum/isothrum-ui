@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { PRESETS, deviceFrom, presetForKey, runAs, shortcutOf } from "./presets";
-import { machine } from "@/test/lab";
+import { machine } from "@/test/builders";
 
 describe("number keys", () => {
   test("keys 1 to 9 then 0 pick the first ten devices, in toolbar order", () => {

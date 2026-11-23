@@ -1,7 +1,9 @@
 import fc from "fast-check";
 import { describe, expect, test } from "vitest";
 import { DEFAULT_OS, OS_CHOICES, currentMachine, currentOs } from "./os";
-import { machine } from "@/test/lab";
+import { machine } from "@/test/builders";
+import { byText } from "@/test/builders";
+import { engineChoices, verdict } from "@/test/shipped-engine";
 
 describe("currentOs", () => {
   test("writes a stored lab's OS as Isoloom names it now", () => {
@@ -41,5 +43,21 @@ describe("currentMachine", () => {
 });
 
 test("a new VM is Debian 12, one of the OSes offered", () => {
+  expect(DEFAULT_OS).toBe("debian@12");
   expect(OS_CHOICES).toContain(DEFAULT_OS);
+});
+
+describe("the OSes, as Isoloom has them", () => {
+  test("every OS, and only those", async () => {
+    expect([...OS_CHOICES].sort(byText)).toEqual([...(await engineChoices()).os].sort(byText));
+  });
+
+  test("every OS the editor offers compiles, and the same lab with the earlier spelling doesn't", async () => {
+    const vmOn = (os: string) => verdict({ name: "os", networks: { lan: { cidr: "10.10.1.0/24" } }, nodes: { m: { kind: { vm: { os } }, networks: { lan: null } } } });
+    for (const os of OS_CHOICES) {
+      const v = await vmOn(os);
+      expect(v.ok, `${os}: ${v.error ?? ""}`).toBe(true);
+    }
+    expect((await vmOn("debian-12")).ok).toBe(false);
+  });
 });

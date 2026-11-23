@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { accessVlan, isTrunkPort, switchLans, switchPortLabel, trunkInterface, trunkStripes, vlanColor, vlanName, vlanOf } from "./vlans";
-import { cable, switchNode } from "@/test/lab";
+import { cable, switchNode } from "@/test/builders";
 
 describe("VLAN names and colors", () => {
   test("names a VLAN vlan<id>, and reads the number back from a LAN's name", () => {

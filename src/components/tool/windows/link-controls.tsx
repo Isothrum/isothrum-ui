@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useText } from "../text";
 
 /** Desktop only: capture a LAN's or a cable's traffic while the lab runs. */
-export function CaptureControl({ network, running, file, capturing, onStart, onStop }: { network: string; running: boolean; file: string | null | undefined; capturing: boolean; onStart: () => void; onStop: () => void }) {
+export function CaptureControl({ network, running, file, capturing, onStart, onStop }: Readonly<{ network: string; running: boolean; file: string | null | undefined; capturing: boolean; onStart: () => void; onStop: () => void }>) {
   const t = useText().capture;
   return (
     <div className="flex flex-col gap-1.5 rounded-lg bg-pastel-violet p-3">
@@ -43,7 +43,7 @@ export function CaptureControl({ network, running, file, capturing, onStart, onS
  * Desktop only: suspend a link while the lab runs, as GNS3 does: a cable's ends (their ports,
  * down) or, with `all`, every link of a LAN. `suspended` says so when it is.
  */
-export function LinkControl({ running, busy, all = false, suspended, onSuspend, onResume }: { running: boolean; busy: boolean; all?: boolean; suspended: string | null; onSuspend: () => void; onResume: () => void }) {
+export function LinkControl({ running, busy, all = false, suspended, onSuspend, onResume }: Readonly<{ running: boolean; busy: boolean; all?: boolean; suspended: string | null; onSuspend: () => void; onResume: () => void }>) {
   const t = useText().link;
   return (
     <div className="flex flex-col gap-1.5 rounded-lg bg-pastel-violet p-3">

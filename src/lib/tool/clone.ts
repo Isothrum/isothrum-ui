@@ -1,6 +1,6 @@
 import type { XYPosition } from "@xyflow/react";
 import { usedThirds } from "./create";
-import { freeName, uid, type CableEdge, type LabNode } from "./model";
+import { freeName, trimEnd, uid, type CableEdge, type LabNode } from "./model";
 
 const idPrefix: Record<LabNode["type"], string> = { lan: "l", switch: "s", note: "n", machine: "m" };
 
@@ -14,7 +14,7 @@ function takeThird(used: Set<number>): number {
 
 /** A copy of `n` with a fresh name (web1 -> web3) at `position`, its LAN block taken from `used`. */
 function copyOf(n: Exclude<LabNode, { type: "note" }>, id: string, position: XYPosition, all: LabNode[], used: Set<number>): LabNode {
-  const name = freeName(n.data.name.replace(/\d+$/, "") || "copy", all);
+  const name = freeName(trimEnd(n.data.name, "0123456789") || "copy", all);
   if (n.type === "lan") return { ...n, id, position, selected: true, data: { ...n.data, name, cidr: `10.10.${String(takeThird(used))}.0/24` } };
   if (n.type === "machine") return { ...n, id, position, selected: true, data: { ...n.data, name, pins: undefined } };
   return { ...n, id, position, selected: true, data: { ...n.data, name, vlans: n.data.vlans.map((v) => ({ ...v })), ports: [...n.data.ports] } };

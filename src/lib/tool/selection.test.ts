@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest";
 import type { Plan } from "./engine";
 import { labIssues, nameById, selectionOf } from "./selection";
-import { cable, issueText, lan, machine, note } from "@/test/lab";
+import { cable, lan, machine, note } from "@/test/builders";
+import { issueText } from "@/test/fixtures";
 
 const selected = <T extends object>(x: T): T => ({ ...x, selected: true });
 

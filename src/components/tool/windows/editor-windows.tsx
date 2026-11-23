@@ -9,7 +9,7 @@ import { RunWindow, SelectionWindow, StatusWindow } from "./lab-windows";
 import { CableWindow, LanWindow, MachineWindow } from "./selected-windows";
 
 /** The user's projects (signed in): open one, or one of its earlier versions. */
-function ProjectsWindow({ e }: { e: EditorModel }) {
+function ProjectsWindow({ e }: Readonly<{ e: EditorModel }>) {
   const { projects } = e;
   return (
     <FloatingWindow title={e.t.projects.windowTitle} side="left" width={340} onClose={() => { projects.setProjectsOpen(false); }}>
@@ -31,7 +31,7 @@ function ProjectsWindow({ e }: { e: EditorModel }) {
 }
 
 /** Export: the lab's name, its zip and isoloom.yml, and where it runs. */
-function ExportWindow({ e }: { e: EditorModel }) {
+function ExportWindow({ e }: Readonly<{ e: EditorModel }>) {
   const { plan, downloads, lab } = e;
   return (
     <FloatingWindow title={e.t.export} side="right" width={420} onClose={() => { e.setExportOpen(false); }}>
@@ -56,7 +56,7 @@ function ExportWindow({ e }: { e: EditorModel }) {
 }
 
 /** The windows floating over the canvas: what is selected, projects, the lab's status, Run, Export. */
-export function EditorWindows({ e }: { e: EditorModel }) {
+export function EditorWindows({ e }: Readonly<{ e: EditorModel }>) {
   const { selection, empty } = e;
   return (
     <>

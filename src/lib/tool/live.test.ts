@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { EnvironmentLive } from "./desktop";
 import { liveViewOf } from "./live";
-import { cable, lan, machine } from "@/test/lab";
+import { cable, lan, machine } from "@/test/builders";
 
 const away = { x: 2000, y: 2000 };
 const nodes = [lan("office"), machine("web", {}, away), machine("db", {}, away), machine("cache", {}, away)];

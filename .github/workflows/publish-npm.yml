@@ -8,7 +8,7 @@ name: Publish npm package
 # on the registry — npm Trusted Publishers are configured per package, so a brand-new package name
 # cannot be created by trusted publishing and must be bootstrapped with one manual `npm publish`
 # first. Then, on the package's "Settings → Trusted Publisher" page, add a GitHub Actions publisher
-# pointing at repository `isoloom/isothrum-ui`, this workflow file (`publish-npm.yml`) and the
+# pointing at repository `Isothrum/isothrum-ui`, this workflow file (`publish-npm.yml`) and the
 # `npm-publish` environment. See PUBLISHING.md.
 on:
   push:
@@ -19,8 +19,13 @@ permissions:
   contents: read
 
 jobs:
+  # The check (gate.yml): a tag doesn't run it otherwise, and nothing is published unless it passes.
+  gate:
+    uses: ./.github/workflows/gate.yml
+
   publish:
     name: Publish to npm
+    needs: gate
     runs-on: ubuntu-24.04
     environment: npm-publish
     permissions:
@@ -28,28 +33,29 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
       # registry-url points npm at the public registry; no token is written because trusted
       # publishing authenticates over OIDC.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
-      # Trusted publishing needs npm >= 11.5.1 (Node 24 already ships a newer npm; this is a guard).
-      - name: Ensure npm supports trusted publishing
+      # Trusted publishing needs npm 11.5.1 or later, which Node 24 ships: a guard, nothing
+      # installed from outside the pinned runner tools.
+      - name: npm supports trusted publishing
         run: |
-          npm install -g npm@latest
-          npm --version
+          set -euo pipefail
+          node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); process.exit(a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1))) ? 0 : 1)' "$(npm --version)" ||
+            { echo "::error::npm $(npm --version) can't publish with trusted publishing (11.5.1 or later)"; exit 1; }
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Check (typecheck, tests, build)
-        run: npm run check
-
-      # prepack rebuilds dist/ so the published tarball is exactly what `check` validated. npm
+      # prepack rebuilds dist/ from the commit the gate checked. npm
       # detects the OIDC trusted publisher and generates provenance automatically.
       - name: Publish
         run: npm publish --access public --provenance

@@ -17,7 +17,7 @@ import { TopLeft, TopRight } from "./top-bars";
 import { EditorWindows } from "./windows/editor-windows";
 
 /** The hidden file input a GNS3 project is picked with (the menu opens it). */
-function Gns3Input({ e, input }: { e: EditorModel; input: React.RefObject<HTMLInputElement | null> }) {
+function Gns3Input({ e, input }: Readonly<{ e: EditorModel; input: React.RefObject<HTMLInputElement | null> }>) {
   return (
     <input
       ref={input}
@@ -34,7 +34,7 @@ function Gns3Input({ e, input }: { e: EditorModel; input: React.RefObject<HTMLIn
   );
 }
 
-function Editor({ lang, accounts }: { lang: string; accounts: boolean }) {
+function Editor({ lang, accounts }: Readonly<{ lang: string; accounts: boolean }>) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const gns3Input = useRef<HTMLInputElement>(null);
   const e = useEditor(lang, accounts, canvasRef);

@@ -44,6 +44,12 @@ const CELL_W = 170;
 const CELL_H = 175;
 const GAP = 160;
 
+/** The editor's kind of machine for a topology node's kind. */
+function kindOf(kind: TopologyNode["kind"]): MachineData["kind"] {
+  if (kind.router) return "router";
+  return kind.vm ? "vm" : "container";
+}
+
 function icon(kind: TopologyNode["kind"], access: boolean): IconId {
   if (kind.router) return "router";
   if (kind.vm) return access ? "laptop" : "monitor";
@@ -116,7 +122,7 @@ function addMachine(layout: Layout, name: string, n: TopologyNode, position: { x
   const access = !!n.access;
   const data: MachineData = {
     name: cleanName(name),
-    kind: n.kind.router ? "router" : n.kind.vm ? "vm" : "container",
+    kind: kindOf(n.kind),
     icon: icon(n.kind, access),
     image: n.kind.container?.image ?? "",
     os: n.kind.vm?.os ?? "",

@@ -15,7 +15,7 @@ export interface Opened {
 }
 
 /** A target's commands and files; a click on a file shows it. */
-function TargetDetails({ target, opened }: { target: Target; opened: Opened }) {
+function TargetDetails({ target, opened }: Readonly<{ target: Target; opened: Opened }>) {
   const t = useText().exportPanel;
   const { file: openFile, setFile: setOpenFile } = opened;
   return (
@@ -45,7 +45,7 @@ function TargetDetails({ target, opened }: { target: Target; opened: Opened }) {
 }
 
 /** One target: its name and file count (a click opens it), and its own zip. */
-function TargetRow({ target, opened, onDownload, ready }: { target: Target; opened: Opened; onDownload: () => void; ready: boolean }) {
+function TargetRow({ target, opened, onDownload, ready }: Readonly<{ target: Target; opened: Opened; onDownload: () => void; ready: boolean }>) {
   const t = useText().exportPanel;
   const expanded = opened.target === target.dir;
   const onToggle = () => {
@@ -76,7 +76,7 @@ function TargetRow({ target, opened, onDownload, ready }: { target: Target; open
 }
 
 /** Every target the zip holds, one open at a time. */
-export function TargetList({ targets, ready, opened, onDownloadTarget }: { targets: Target[]; ready: boolean; opened: Opened; onDownloadTarget: (dir: string) => void }) {
+export function TargetList({ targets, ready, opened, onDownloadTarget }: Readonly<{ targets: Target[]; ready: boolean; opened: Opened; onDownloadTarget: (dir: string) => void }>) {
   return (
     <ul className="divide-y rounded-lg border">
       {targets.map((g) => (

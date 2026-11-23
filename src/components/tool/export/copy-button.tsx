@@ -5,7 +5,7 @@ import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useText } from "../text";
 
-export function CopyButton({ text, label }: { text: string; label?: string }) {
+export function CopyButton({ text, label }: Readonly<{ text: string; label?: string }>) {
   const t = useText().exportPanel;
   const [copied, setCopied] = useState(false);
   return (
@@ -30,7 +30,7 @@ export function CopyButton({ text, label }: { text: string; label?: string }) {
 }
 
 /** A command to copy, under its label. */
-export function Command({ label, text }: { label: string; text: string }) {
+export function Command({ label, text }: Readonly<{ label: string; text: string }>) {
   return (
     <div className="rounded-md border bg-surface">
       <div className="flex items-center justify-between border-b px-3 py-1">

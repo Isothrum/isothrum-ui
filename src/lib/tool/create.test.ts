@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { lanBelow, newLan, newMachine, newNote, newSwitch, twoVlans, usedThirds } from "./create";
 import { LAN_BEHAVIOR, LAN_H, LAN_W } from "./model";
 import { PRESETS, type Preset } from "./presets";
-import { lan, machine } from "@/test/lab";
+import { lan, machine } from "@/test/builders";
 
 /** The built-in device with this id. */
 const preset = (id: string): Preset => {

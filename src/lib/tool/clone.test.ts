@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { cloneLab } from "./clone";
 import type { LabNode } from "./model";
-import { byId, cable, lan, machine, note, switchNode } from "@/test/lab";
+import { byId, cable, lan, machine, note, switchNode } from "@/test/builders";
 
 const office = lan("l1", { name: "office", cidr: "10.10.1.0/24" });
 const web = machine("m1", { name: "web1", pins: { office: 20 } }, { x: 10, y: 20 });
@@ -37,8 +37,10 @@ describe("cloneLab", () => {
 
   test("keeps a switch's VLAN numbers, in lists of its own", () => {
     const [c] = copy([sw]).nodes;
-    expect(c.type === "switch" && c.data.vlans).toEqual(sw.data.vlans);
-    expect(c.type === "switch" && c.data.vlans !== sw.data.vlans && c.data.ports !== sw.data.ports).toBe(true);
+    if (c.type !== "switch") throw new Error("not a switch");
+    expect(c.data.vlans).toEqual(sw.data.vlans);
+    expect(c.data.vlans).not.toBe(sw.data.vlans);
+    expect(c.data.ports).not.toBe(sw.data.ports);
   });
 
   test("copies a note as it is", () => {

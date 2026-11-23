@@ -23,7 +23,7 @@ const logoMark = {
 } as const;
 
 /** The default Isothrum mark, themed by `--primary`/`--primary-foreground`. */
-export function DefaultBrandMark({ className }: BrandMarkProps) {
+export function DefaultBrandMark({ className }: Readonly<BrandMarkProps>) {
   return (
     <svg viewBox={logoMark.viewBox} aria-hidden className={cn("size-7 shrink-0", className)}>
       <rect width="32" height="32" rx={logoMark.radius} className="fill-primary" />
@@ -36,7 +36,7 @@ export function DefaultBrandMark({ className }: BrandMarkProps) {
 const BrandMarkContext = createContext<BrandMark>(DefaultBrandMark);
 
 /** Lets a host replace the editor's product mark. Omit it to keep the default Isothrum mark. */
-export function BrandMarkProvider({ mark, children }: { mark: BrandMark; children: ReactNode }) {
+export function BrandMarkProvider({ mark, children }: Readonly<{ mark: BrandMark; children: ReactNode }>) {
   return <BrandMarkContext.Provider value={mark}>{children}</BrandMarkContext.Provider>;
 }
 

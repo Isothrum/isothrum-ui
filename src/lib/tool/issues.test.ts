@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { canvasIssues } from "./issues";
-import { issueText, lan, machine, note, switchNode } from "@/test/lab";
+import { lan, machine, note, switchNode } from "@/test/builders";
+import { issueText } from "@/test/fixtures";
 
 describe("canvasIssues", () => {
   test("finds nothing on a lab with distinct names and agreeing blocks", () => {

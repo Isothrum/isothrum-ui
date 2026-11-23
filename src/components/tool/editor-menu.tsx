@@ -80,7 +80,7 @@ function AccountItems() {
 }
 
 /** Saving to and opening from the user's projects. */
-function ProjectItems({ projects }: { projects: ProjectActions }) {
+function ProjectItems({ projects }: Readonly<{ projects: ProjectActions }>) {
   const tp = useText().projects;
   return (
     <>
@@ -100,7 +100,7 @@ function ProjectItems({ projects }: { projects: ProjectActions }) {
 }
 
 /** The light or dark theme, and the canvas's look. */
-function LookItems({ design, onDesign }: Pick<EditorMenuProps, "design" | "onDesign">) {
+function LookItems({ design, onDesign }: Readonly<Pick<EditorMenuProps, "design" | "onDesign">>) {
   const t = useText().menu;
   const { resolvedTheme, setTheme } = useTheme();
   const dark = resolvedTheme === "dark";
@@ -126,7 +126,7 @@ function LookItems({ design, onDesign }: Pick<EditorMenuProps, "design" | "onDes
 }
 
 /** The editor in another language, and the site's pages about it. */
-function SiteItems({ lang, accounts }: Pick<EditorMenuProps, "lang" | "accounts">) {
+function SiteItems({ lang, accounts }: Readonly<Pick<EditorMenuProps, "lang" | "accounts">>) {
   const t = useText().menu;
   return (
     <>
@@ -155,7 +155,7 @@ function SiteItems({ lang, accounts }: Pick<EditorMenuProps, "lang" | "accounts"
 }
 
 /** The editor's menu (top left): examples, projects, files, the look, the language. */
-export function EditorMenu(p: EditorMenuProps) {
+export function EditorMenu(p: Readonly<EditorMenuProps>) {
   const t = useText().menu;
   return (
     <DropdownMenu>

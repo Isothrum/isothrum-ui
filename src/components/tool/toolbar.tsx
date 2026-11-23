@@ -42,7 +42,7 @@ function ModeButtons({ e }: { e: EditorModel }) {
 }
 
 /** A tool of its own (a LAN, a note): picked, it is the next thing a click places. */
-function ToolButton({ e, tool, label, title, letter, children }: { e: EditorModel; tool: string; label: string; title: string; letter: string; children: ReactNode }) {
+function ToolButton({ e, tool, label, title, letter, children }: Readonly<{ e: EditorModel; tool: string; label: string; title: string; letter: string; children: ReactNode }>) {
   const { tools } = e;
   return (
     <button
@@ -60,7 +60,7 @@ function ToolButton({ e, tool, label, title, letter, children }: { e: EditorMode
 }
 
 /** The blocks from `from` to `to` (the network ones, then the machines). */
-function Blocks({ e, from, to }: { e: EditorModel; from: number; to?: number }) {
+function Blocks({ e, from, to = e.devices.blocks.length }: Readonly<{ e: EditorModel; from: number; to?: number }>) {
   const { devices, tools } = e;
   return devices.blocks.slice(from, to).map((b) => (
     <DeviceBlock key={b.id} block={b} choice={devices.blockChoice[b.id]} active={tools.activeTool} onPick={(tool) => { devices.pickFromBlock(b.id, tool); }} onForget={devices.forgetDevice} />
@@ -68,7 +68,7 @@ function Blocks({ e, from, to }: { e: EditorModel; from: number; to?: number }) 
 }
 
 /** Top center: the devices, grouped as network, containers, VMs; the line under it says what a click does. */
-export function Toolbar({ e }: { e: EditorModel }) {
+export function Toolbar({ e }: Readonly<{ e: EditorModel }>) {
   const t = e.t;
   const { tools, lab } = e;
   const hint = hintFor(tools.activeTool, e.tool?.label, { hand: tools.mode === "hand", nodes: lab.nodes.length, edges: lab.edges.length }, t);

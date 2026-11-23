@@ -20,7 +20,7 @@ const SIDES = [
 ] as const;
 
 /** Business: a panel, its header a band in the LAN's color. */
-function LanPanel({ tint, selected }: { tint: string | null; selected: boolean }) {
+function LanPanel({ tint, selected }: Readonly<{ tint: string | null; selected: boolean }>) {
   const color = tint ?? "#2563eb";
   return (
     <div
@@ -34,7 +34,7 @@ function LanPanel({ tint, selected }: { tint: string | null; selected: boolean }
 }
 
 /** Sketch: a dashed area in the LAN's tint (a VLAN's color), or a pale blue. */
-function LanSketch({ frame, tint, selected, w, h }: { frame: Drawable; tint: string | null; selected: boolean; w: number; h: number }) {
+function LanSketch({ frame, tint, selected, w, h }: Readonly<{ frame: Drawable; tint: string | null; selected: boolean; w: number; h: number }>) {
   return (
     <svg aria-hidden className="pointer-events-none absolute inset-0 overflow-visible" width={w} height={h}>
       <Sketch
@@ -48,7 +48,7 @@ function LanSketch({ frame, tint, selected, w, h }: { frame: Drawable; tint: str
 }
 
 /** Where cables plug in (kept while the area is hidden, cables may hang on them), and the border: the LAN's grip, to move it and everything in it. */
-function LanGrips({ hidden }: { hidden: boolean }) {
+function LanGrips({ hidden }: Readonly<{ hidden: boolean }>) {
   const grips = ["top-0 inset-x-0 h-3 -translate-y-1/2", "bottom-0 inset-x-0 h-3 translate-y-1/2", "left-0 inset-y-0 w-3 -translate-x-1/2", "right-0 inset-y-0 w-3 translate-x-1/2"] as const;
   return (
     <>
@@ -68,14 +68,14 @@ function LanGrips({ hidden }: { hidden: boolean }) {
 }
 
 /** Business: how many machines a LAN has. */
-function LanHosts({ name }: { name: string }) {
+function LanHosts({ name }: Readonly<{ name: string }>) {
   const t = useText().canvas;
   const n = Object.values(useContext(AddressesContext)).filter((ips) => ips?.some(([net]) => net === name)).length;
   return <span className="rounded-sm px-1 text-[10px] whitespace-nowrap text-muted-foreground">{t.hosts(n)}</span>;
 }
 
 /** A running LAN's ports up, out of all: green when all are, amber when some aren't. */
-function LanLive({ name }: { name: string }) {
+function LanLive({ name }: Readonly<{ name: string }>) {
   const t = useText().canvas.live;
   const lan = useContext(LiveContext)?.lans[name];
   if (!lan?.total) return null;
@@ -89,7 +89,7 @@ function LanLive({ name }: { name: string }) {
 }
 
 /** The label: also a grip; double-click the name or the block to edit them in place. */
-function LanLabel({ id, data, crisp }: { id: string; data: LanData; crisp: boolean }) {
+function LanLabel({ id, data, crisp }: Readonly<{ id: string; data: LanData; crisp: boolean }>) {
   const t = useText().canvas;
   const { updateNodeData } = useReactFlow();
   const hidden = !!data.hidden;

@@ -28,11 +28,15 @@ const HANDLE = "!size-3 !border-2 !border-background !bg-foreground/50 transitio
  * LAN's edge, the cables to the other network), facing out of the LAN, and on a LAN's edge its
  * inside port. Another machine: its top and bottom.
  */
-function MachineHandles({ appliance, side }: { appliance: boolean; side: Side | undefined }) {
+function MachineHandles({ appliance, side }: Readonly<{ appliance: boolean; side: Side | undefined }>) {
   if (!appliance) {
-    return (["top", "bottom"] as const).map((h) => (
-      <Handle key={h} id={h} type="source" position={h === "top" ? Position.Top : Position.Bottom} className="!size-2.5 !border-2 !border-background !bg-foreground/40 transition-colors group-hover:!bg-signal" />
-    ));
+    return (
+      <>
+        {(["top", "bottom"] as const).map((h) => (
+          <Handle key={h} id={h} type="source" position={h === "top" ? Position.Top : Position.Bottom} className="!size-2.5 !border-2 !border-background !bg-foreground/40 transition-colors group-hover:!bg-signal" />
+        ))}
+      </>
+    );
   }
   return (
     <>
@@ -43,18 +47,18 @@ function MachineHandles({ appliance, side }: { appliance: boolean; side: Side | 
 }
 
 /** What the machine runs as, and whether it is the access machine (two pieces of text, as drawn). */
-function KindLine({ data }: { data: MachineData }) {
+function KindLine({ data }: Readonly<{ data: MachineData }>) {
   const t = useText().canvas;
   return (
     <>
-      {data.kind === "vm" ? t.vm : data.kind === "router" ? t.automatic : t.container}
+      {{ vm: t.vm, router: t.automatic, container: t.container }[data.kind]}
       {data.access ? ` · ${t.access}` : ""}
     </>
   );
 }
 
 /** Business: an asset card, its icon tinted, its name and role, then its facts. */
-function BusinessBody({ id, data, down }: { id: string; data: MachineData; down: boolean }) {
+function BusinessBody({ id, data, down }: Readonly<{ id: string; data: MachineData; down: boolean }>) {
   const t = useText().canvas;
   const { updateNodeData } = useReactFlow();
   return (
@@ -75,7 +79,7 @@ function BusinessBody({ id, data, down }: { id: string; data: MachineData; down:
 }
 
 /** Sketch: the logo, the name, what it runs as. */
-function SketchBody({ id, data, down }: { id: string; data: MachineData; down: boolean }) {
+function SketchBody({ id, data, down }: Readonly<{ id: string; data: MachineData; down: boolean }>) {
   const t = useText().canvas;
   const { updateNodeData } = useReactFlow();
   return (

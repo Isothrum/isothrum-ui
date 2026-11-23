@@ -9,7 +9,7 @@ import { PRESET_MIME } from "./hooks/use-placement";
 import { useText } from "./text";
 
 /** A kind's picture: the device's, or the switch's ports. */
-function BlockIcon({ option }: { option: BlockOption }) {
+function BlockIcon({ option }: Readonly<{ option: BlockOption }>) {
   if (option.preset) return <DeviceIcon data={option.preset.data} size="sm" />;
   return (
     <span className="flex size-8 shrink-0 items-center justify-center gap-[2px] rounded-md bg-background ring-1 ring-foreground/10" aria-hidden>
@@ -21,7 +21,7 @@ function BlockIcon({ option }: { option: BlockOption }) {
 }
 
 /** One kind in a block's list: what it is, its key, and (a saved device) a way to forget it. */
-function KindItem({ o, current, onPick, onForget }: { o: BlockOption; current: string; onPick: (tool: string) => void; onForget: (id: string) => void }) {
+function KindItem({ o, current, onPick, onForget }: Readonly<{ o: BlockOption; current: string; onPick: (tool: string) => void; onForget: (id: string) => void }>) {
   const t = useText().toolbar;
   return (
     <DropdownMenuItem onClick={() => { onPick(o.tool); }} className="gap-2.5">
@@ -52,7 +52,7 @@ function KindItem({ o, current, onPick, onForget }: { o: BlockOption; current: s
 }
 
 /** A block's arrow: every kind it places, with what it is and its key. */
-function KindsMenu({ block, current, onPick, onForget }: { block: Block; current: string; onPick: (tool: string) => void; onForget: (id: string) => void }) {
+function KindsMenu({ block, current, onPick, onForget }: Readonly<{ block: Block; current: string; onPick: (tool: string) => void; onForget: (id: string) => void }>) {
   const t = useText().toolbar;
   return (
     <DropdownMenu>
@@ -79,7 +79,7 @@ function KindsMenu({ block, current, onPick, onForget }: { block: Block; current
  * A toolbar block: one button that places the kind picked last (drag it, or click then click
  * the canvas), and an arrow listing every kind with what it is and its key.
  */
-export function DeviceBlock({ block, choice, active, onPick, onForget }: { block: Block; choice: string | undefined; active: string | null; onPick: (tool: string) => void; onForget: (id: string) => void }) {
+export function DeviceBlock({ block, choice, active, onPick, onForget }: Readonly<{ block: Block; choice: string | undefined; active: string | null; onPick: (tool: string) => void; onForget: (id: string) => void }>) {
   const current = block.options.find((o) => o.tool === choice) ?? block.options.at(0);
   if (!current) return null;
   const on = block.options.some((o) => o.tool === active);
@@ -96,7 +96,7 @@ export function DeviceBlock({ block, choice, active, onPick, onForget }: { block
         onClick={() => { onPick(current.tool); }}
         aria-pressed={on}
         aria-label={`${block.label}: ${current.label}`}
-        title={`${block.label}: ${current.label} (${current.hint})${current.key ? ` · ${current.key}` : ""}`}
+        title={[`${block.label}: ${current.label} (${current.hint})`, current.key].filter(Boolean).join(" · ")}
         className={cn("grid size-10 place-items-center rounded-lg transition-colors hover:bg-muted", on && "hover:bg-transparent")}
       >
         <BlockIcon option={current} />

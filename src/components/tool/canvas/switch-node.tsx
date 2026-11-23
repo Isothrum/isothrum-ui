@@ -31,13 +31,16 @@ function usePortTitle(data: SwitchData) {
   return (i: number | typeof TRUNK) => {
     const mode = i === TRUNK ? TRUNK : data.ports[i];
     const name = i === TRUNK ? "T" : t.port(i + 1);
-    if (mode === TRUNK) return `${name}: ${t.trunkCarries(data.vlans.map((v) => vlanName(v.id)).join(", ") || t.noVlan)}${i === TRUNK ? "" : ` ${t.clickToChange}`}`;
+    if (mode === TRUNK) {
+      const carries = `${name}: ${t.trunkCarries(data.vlans.map((v) => vlanName(v.id)).join(", ") || t.noVlan)}`;
+      return i === TRUNK ? carries : `${carries} ${t.clickToChange}`;
+    }
     return `${name}: ${mode === null ? t.noVlan : vlanName(mode)} ${t.clickToChange}`;
   };
 }
 
 /** One port: its number, its square in its VLAN's color (striped for a trunk), its handle. */
-function SwitchPort({ id, data, i, onCycle }: { id: string; data: SwitchData; i: number | typeof TRUNK; onCycle: (i: number) => void }) {
+function SwitchPort({ id, data, i, onCycle }: Readonly<{ id: string; data: SwitchData; i: number | typeof TRUNK; onCycle: (i: number) => void }>) {
   const t = useText().canvas;
   const sides = useContext(SidesContext);
   const business = useBusiness();
@@ -45,7 +48,9 @@ function SwitchPort({ id, data, i, onCycle }: { id: string; data: SwitchData; i:
   const trunk = i === TRUNK;
   const mode = trunk ? TRUNK : data.ports[i];
   const vlan = typeof mode === "number" ? mode : null;
-  const color = mode === TRUNK ? trunkStripes(data.vlans) : vlan === null ? null : vlanColor(vlan);
+  let color: string | null = null;
+  if (mode === TRUNK) color = trunkStripes(data.vlans);
+  else if (vlan !== null) color = vlanColor(vlan);
   const handle = trunk ? TRUNK : `p${String(i + 1)}`;
   const x = portX(i);
   return (
@@ -77,7 +82,7 @@ function SwitchPort({ id, data, i, onCycle }: { id: string; data: SwitchData; i:
 }
 
 /** The VLANs, beside the faceplate (cables leave from above and below it): double-click to edit, + to add, × to remove. */
-function VlanList({ id, data }: { id: string; data: SwitchData }) {
+function VlanList({ id, data }: Readonly<{ id: string; data: SwitchData }>) {
   const t = useText().canvas;
   const { updateNodeData } = useReactFlow();
   return (
