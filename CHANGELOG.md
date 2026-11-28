@@ -6,6 +6,15 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-11-28
+
+### Fixed
+
+- **The package can be published with provenance.** `package.json` now names its
+  repository (with `homepage` and `bugs`). npm refused the 1.1.0 publish because
+  `repository.url` didn't match the repository named in the provenance. A test keeps
+  the field in place.
+
 ## [1.1.0] — 2026-11-27
 
 ### Changed
